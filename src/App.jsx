@@ -1,8 +1,9 @@
 import "./App.css";
+import NavComponent from "./components/NavComponent";
 function App() {
   return (
     <div className="App">
-      <h1>Flota el Chaqueño</h1>
+      <NavComponent />
     </div>
   );
 }
