@@ -1,27 +1,33 @@
-import { useState } from "react";
+import loginService from "../services/login";
+import { useNavigate } from "react-router-dom";
+
+import { useState, useContext } from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { UserContext } from "../context/userContext";
 
 const Login = () => {
-  const [user, setUser] = useState("");
+  const [user, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const User = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const credentials = { user: user, password: password };
 
-    fetch("http://localhost:3003/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: user, password: password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/dashboard";
+    loginService
+      .login(credentials)
+      .then((response) => {
+        User.updateUser(response.user);
+        window.localStorage.setItem("token", JSON.stringify(response.token));
+        window.localStorage.setItem("user", JSON.stringify(response.user));
+        User.updateUser(response.user);
+        navigate("/");
+        console.log("Logged in as:", response.name);
       })
       .catch((error) => {
-        // Handle any errors here
+        console.error("Error logging in:", error);
+        alert("Error logging in: Invalid user or password");
       });
   };
 
@@ -34,7 +40,7 @@ const Login = () => {
           name="user"
           id="user"
           value={user}
-          onChange={(e) => setUser(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </FormGroup>
       <FormGroup>
