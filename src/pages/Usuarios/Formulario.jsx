@@ -36,8 +36,6 @@ function AddEditForm(props) {
       .catch((error) => {
         alert("Error al agregar usuario", error);
       });
-    props.addItemToState(form);
-    props.toggle();
   };
 
   const submitFormEdit = (e) => {
@@ -52,8 +50,6 @@ function AddEditForm(props) {
       .catch((error) => {
         alert("Error al actualizar usuario", error);
       });
-    props.updateState(form);
-    props.toggle();
   };
 
   useEffect(() => {

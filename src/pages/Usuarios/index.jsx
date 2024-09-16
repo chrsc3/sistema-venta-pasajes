@@ -23,7 +23,7 @@ function Usuarios(props) {
   };
 
   const addItemToState = (usuario) => {
-    setUsuarios([...usuarios, usuario]);
+    setUsuarios(usuarios.concat(usuario));
   };
 
   const updateState = (usuario) => {
