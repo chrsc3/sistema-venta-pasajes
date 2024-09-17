@@ -42,10 +42,10 @@ function NavComponent() {
               <NavLink href="/">DashBoard</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="/login">Login</NavLink>
+              <NavLink href="/usuarios">Usuarios</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="/usuarios">Usuarios</NavLink>
+              <NavLink href="/choferes">Choferes</NavLink>
             </NavItem>
             <NavItem>
               <NavLink href="/roles">Roles</NavLink>

@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Usuarios from "./pages/Usuarios";
 import Roles from "./pages/Roles";
+import Choferes from "./pages/Choferes";
 import { useContext } from "react";
 import { UserContext } from "./context/userContext";
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/roles" element={<Roles />} />
+            <Route path="/choferes" element={<Choferes />} />
           </Routes>
         </div>
       ) : (
