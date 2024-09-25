@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import Usuarios from "./pages/Usuarios";
 import Roles from "./pages/Roles";
 import Choferes from "./pages/Choferes";
+import Buses from "./pages/Buses";
+import Viajes from "./pages/Viajes";
 import { useContext } from "react";
 import { UserContext } from "./context/userContext";
 function App() {
@@ -19,6 +21,9 @@ function App() {
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/roles" element={<Roles />} />
             <Route path="/choferes" element={<Choferes />} />
+            <Route path="/oficinas" element={<h1>Oficinas</h1>} />
+            <Route path="/buses" element={<Buses></Buses>} />
+            <Route path="/viajes" element={<Viajes></Viajes>} />
           </Routes>
         </div>
       ) : (

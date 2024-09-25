@@ -50,6 +50,15 @@ function NavComponent() {
             <NavItem>
               <NavLink href="/roles">Roles</NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink href="/buses">Buses</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/viajes">Viajes</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/oficinas">Oficinas</NavLink>
+            </NavItem>
           </Nav>
         </Collapse>
       </Navbar>

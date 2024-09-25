@@ -1,4 +1,5 @@
 import { Container, Row, Col } from "reactstrap";
+import Ventas from "./Ventas";
 
 const Dashboard = () => {
   return (
@@ -9,6 +10,7 @@ const Dashboard = () => {
           <p>This is the main page of your dashboard.</p>
         </Col>
       </Row>
+      <Ventas />
     </Container>
   );
 };
