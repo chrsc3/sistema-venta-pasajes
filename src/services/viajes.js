@@ -8,7 +8,36 @@ const setToken = (newToken) => {
 
 const getAll = () => {
   const request = axios.get(baseUrl);
-  return request.then((response) => response.data);
+  return request.then((response) => {
+    const data = response.data;
+    if (Array.isArray(data)) {
+      data.forEach((item) => {
+        if (item.fechaViaje) {
+          const fechaViaje = new Date(item.fechaViaje);
+          item.fechaViaje = {
+            fecha: fechaViaje.toISOString().split("T")[0],
+            hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
+          };
+        }
+      });
+    }
+    return data;
+  });
+};
+
+const getOne = (id) => {
+  const request = axios.get(`${baseUrl}/${id}`);
+  return request.then((response) => {
+    const data = response.data;
+    if (data && data.fechaViaje) {
+      const fechaViaje = new Date(data.fechaViaje);
+      data.fechaViaje = {
+        fecha: fechaViaje.toISOString().split("T")[0],
+        hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
+      };
+    }
+    return data;
+  });
 };
 
 const create = async (newObject) => {
@@ -35,4 +64,4 @@ const remove = async (id) => {
   return response;
 };
 
-export default { getAll, create, update, remove, setToken };
+export default { getAll, create, update, remove, setToken, getOne };

@@ -1,12 +1,12 @@
 function parseAsientos(asientosStr) {
   const asientosArray = asientosStr.split(",").map(Number);
   return asientosArray.map((asiento, index) => ({
-    id: index + 1,
-    status: asiento,
+    id: index,
+    numAsiento: asiento,
   }));
 }
 function stringifyAsientos(asientos) {
-  return asientos.map((asiento) => asiento.status).join(",");
+  return asientos.map((asiento) => asiento.numAsiento).join(",");
 }
 
 export { parseAsientos, stringifyAsientos };

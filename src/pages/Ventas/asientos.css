@@ -1,0 +1,28 @@
+.asientos-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Define 4 columnas */
+  grid-auto-rows: 40px; /* Define la altura de las filas */
+  gap: 10px; /* Espacio entre las celdas */
+}
+
+.asiento-card {
+  padding: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.pasillo {
+  background-color: transparent;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  grid-column: span 1;
+}
+
+.asiento {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  grid-column: span 1;
+  height: 40px;
+}

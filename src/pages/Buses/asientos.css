@@ -1,0 +1,25 @@
+.asientos-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Define 3 columnas */
+  gap: 10px; /* Espacio entre columnas */
+  max-width: 400px; /* Ajusta según el tamaño de los asientos */
+  margin-bottom: 20px;
+}
+
+.asiento-badge {
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.pasillo {
+  background-color: transparent;
+  border-left: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  min-height: 60px;
+  grid-column: span 1;
+}
+
+.asiento {
+  text-align: center;
+}

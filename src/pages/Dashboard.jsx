@@ -10,7 +10,6 @@ const Dashboard = () => {
           <p>This is the main page of your dashboard.</p>
         </Col>
       </Row>
-      <Ventas />
     </Container>
   );
 };
