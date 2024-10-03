@@ -9,107 +9,95 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
-import { parseAsientos } from "../../utils/ParserAsientos";
-import busService from "../../services/buses";
+import asientospaService from "../../services/asientospa";
+import asientospbService from "../../services/asientospb";
 import "./asientos.css"; // Asegúrate de crear un archivo CSS para personalizar estilos
 import imgAsiento from "../../assets/seat-icon.svg";
-const inicialPlantaAlta = [
-  { id: 0, numAsiento: 0 },
-  { id: 1, numAsiento: 0 },
-  { id: 2, numAsiento: 0 },
-  { id: 3, numAsiento: 0 },
-  { id: 4, numAsiento: 0 },
-  { id: 5, numAsiento: 0 },
-  { id: 6, numAsiento: 0 },
-  { id: 7, numAsiento: 0 },
-  { id: 8, numAsiento: 0 },
-  { id: 9, numAsiento: 0 },
-  { id: 10, numAsiento: 0 },
-  { id: 11, numAsiento: 0 },
-  { id: 12, numAsiento: 0 },
-  { id: 13, numAsiento: 0 },
-  { id: 14, numAsiento: 0 },
-  { id: 15, numAsiento: 0 },
-  { id: 16, numAsiento: 0 },
-  { id: 17, numAsiento: 0 },
-  { id: 18, numAsiento: 0 },
-  { id: 19, numAsiento: 0 },
-  { id: 20, numAsiento: 0 },
-  { id: 21, numAsiento: 0 },
-  { id: 22, numAsiento: 0 },
-  { id: 23, numAsiento: 0 },
-  { id: 24, numAsiento: 0 },
-  { id: 25, numAsiento: 0 },
-  { id: 26, numAsiento: 0 },
-  { id: 27, numAsiento: 0 },
-  { id: 28, numAsiento: 0 },
-  { id: 29, numAsiento: 0 },
-  { id: 30, numAsiento: 0 },
-  { id: 31, numAsiento: 0 },
-  { id: 32, numAsiento: 0 },
-  { id: 33, numAsiento: 0 },
-  { id: 34, numAsiento: 0 },
-  { id: 35, numAsiento: 0 },
-  { id: 36, numAsiento: 0 },
-  { id: 37, numAsiento: 0 },
-  { id: 38, numAsiento: 0 },
-  { id: 39, numAsiento: 0 },
-  { id: 40, numAsiento: 0 },
-  { id: 41, numAsiento: 0 },
-  { id: 42, numAsiento: 0 },
-  { id: 43, numAsiento: 0 },
-  { id: 44, numAsiento: 0 },
-  { id: 45, numAsiento: 0 },
-];
+const inicialPlantaAlta = [];
 
-const inicialPlantaBaja = [
-  { id: 0, numAsiento: 0 },
-  { id: 1, numAsiento: 0 },
-  { id: 2, numAsiento: 0 },
-  { id: 3, numAsiento: 0 },
-  { id: 4, numAsiento: 0 },
-  { id: 5, numAsiento: 0 },
-  { id: 6, numAsiento: 0 },
-  { id: 7, numAsiento: 0 },
-  { id: 8, numAsiento: 0 },
-  { id: 9, numAsiento: 0 },
-  { id: 10, numAsiento: 0 },
-  { id: 11, numAsiento: 0 },
-  { id: 12, numAsiento: 0 },
-  { id: 13, numAsiento: 0 },
-  { id: 14, numAsiento: 0 },
-  { id: 15, numAsiento: 0 },
-  { id: 16, numAsiento: 0 },
-];
+const inicialPlantaBaja = [];
 
 const Asientos = (props) => {
   const [plantaAlta, setPlantaAlta] = useState(inicialPlantaAlta);
   const [plantaBaja, setPlantaBaja] = useState(inicialPlantaBaja);
-  const [bus, setBus] = useState([]);
 
   const getSeatColor = (numAsiento) => {
-    if (numAsiento === 0) {
+    if (numAsiento === "reservado") {
       return "danger";
     }
-    if (numAsiento >= 1) {
+    if (numAsiento === "libre") {
       return "success";
     }
   };
 
+  const reservaAsientoPa = (idAsiento, idViaje, numAsiento, estado) => {
+    estado == "reservado" ? (estado = "libre") : (estado = "reservado");
+    asientospaService
+      .update(idAsiento, idViaje, {
+        numAsiento: numAsiento,
+        estado: estado,
+        nombre: "",
+        ci: "",
+      })
+      .then((response) => {
+        setPlantaAlta(
+          plantaAlta.map((asiento) =>
+            asiento.idAsientoPa === idAsiento
+              ? {
+                  ...asiento,
+                  estado: response.estado,
+                }
+              : asiento
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating asientospa data:", error);
+      });
+  };
+  const reservaAsientoPb = (idAsiento, idViaje, numAsiento, estado) => {
+    estado == "reservado" ? (estado = "libre") : (estado = "reservado");
+    asientospbService
+      .update(idAsiento, idViaje, {
+        numAsiento: numAsiento,
+        estado: estado,
+        nombre: "",
+        ci: "",
+      })
+      .then((response) => {
+        setPlantaBaja(
+          plantaBaja.map((asiento) =>
+            asiento.idAsientoPb === idAsiento
+              ? {
+                  ...asiento,
+                  estado: response.estado,
+                }
+              : asiento
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating asientospb data:", error);
+      });
+  };
+
   useEffect(() => {
     if (props.item) {
-      busService
-        .getOne(props.item.Buses_idBus)
-        .then((bus1) => {
-          if (bus1) {
-            setBus(bus1);
-            setPlantaAlta(parseAsientos(bus1.plantaAlta));
-            setPlantaBaja(parseAsientos(bus1.plantaBaja));
-          }
+      asientospaService
+        .getbyviajes(props.item.idViaje)
+        .then((asientos) => {
+          setPlantaAlta(asientos);
         })
         .catch((error) => {
-          console.error("Error fetching bus data:", error);
+          console.error("Error fetching asientospa data:", error);
+        });
+      asientospbService
+        .getbyviajes(props.item.idViaje)
+        .then((asientos) => {
+          setPlantaBaja(asientos);
+        })
+        .catch((error) => {
+          console.error("Error fetching asientospb data:", error);
         });
     }
   }, [props.item]);
@@ -122,7 +110,7 @@ const Asientos = (props) => {
           <div className="asientos-container">
             {plantaAlta.map((asiento, index) => (
               <div
-                key={asiento.id}
+                key={asiento.idAsientoPa}
                 className={`text-center mb-0 ${
                   index % 4 === 2 || asiento.numAsiento == 0
                     ? "pasillo"
@@ -131,8 +119,16 @@ const Asientos = (props) => {
               >
                 {index % 4 !== 2 && asiento.numAsiento != 0 && (
                   <Card
-                    color={getSeatColor(asiento.numAsiento)}
+                    color={getSeatColor(asiento.estado)}
                     className="asiento-card"
+                    onClick={() =>
+                      reservaAsientoPa(
+                        asiento.idAsientoPa,
+                        props.item.idViaje,
+                        asiento.numAsiento,
+                        asiento.estado
+                      )
+                    }
                   >
                     <CardImg
                       style={{
@@ -163,15 +159,25 @@ const Asientos = (props) => {
           <div className="asientos-container">
             {plantaBaja.map((asiento, index) => (
               <div
-                key={asiento.id}
-                className={`text-center mb-2 ${
-                  index % 4 === 2 ? "pasillo" : "asiento"
+                key={asiento.idAsientoPb}
+                className={`text-center mb-0 ${
+                  index % 4 === 2 || asiento.numAsiento == 0
+                    ? "pasillo"
+                    : "asiento"
                 }`}
               >
-                {index % 4 !== 2 && (
+                {index % 4 !== 2 && asiento.numAsiento != 0 && (
                   <Card
-                    color={getSeatColor(asiento.numAsiento)}
+                    color={getSeatColor(asiento.estado)}
                     className="asiento-card"
+                    onClick={() =>
+                      reservaAsientoPb(
+                        asiento.idAsientoPb,
+                        props.item.idViaje,
+                        asiento.numAsiento,
+                        asiento.estado
+                      )
+                    }
                   >
                     <CardImg
                       width="100%"
@@ -184,7 +190,7 @@ const Asientos = (props) => {
                     />
                     <CardImgOverlay>
                       <CardText style={{ color: "white" }}>
-                        {asiento.id}
+                        {asiento.numAsiento}
                       </CardText>
                     </CardImgOverlay>
                   </Card>
