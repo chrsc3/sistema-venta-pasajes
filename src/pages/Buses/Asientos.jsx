@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Input, Container, Row, Col, Badge } from "reactstrap";
-import { parseAsientos } from "../../utils/ParserAsientos";
 import "./asientos.css"; // Asegúrate de crear un archivo CSS para personalizar estilos
 
 const inicialPlantaAlta = [
@@ -88,7 +87,12 @@ const Asientos = (props) => {
 
   const onChangeAlta = (e, id) => {
     const updatedPlantaAlta = plantaAlta.map((asiento) =>
-      asiento.id === id ? { ...asiento, numAsiento: e.target.value } : asiento
+      asiento.id === id
+        ? {
+            ...asiento,
+            numAsiento: e.target.value && parseInt(e.target.value, 10),
+          }
+        : asiento
     );
     setPlantaAlta(updatedPlantaAlta);
     props.convertAsientos(updatedPlantaAlta, plantaBaja);
@@ -96,7 +100,12 @@ const Asientos = (props) => {
 
   const onChangeBaja = (e, id) => {
     const updatedPlantaBaja = plantaBaja.map((asiento) =>
-      asiento.id === id ? { ...asiento, numAsiento: e.target.value } : asiento
+      asiento.id === id
+        ? {
+            ...asiento,
+            numAsiento: e.target.value && parseInt(e.target.value, 10),
+          }
+        : asiento
     );
     setPlantaBaja(updatedPlantaBaja);
     props.convertAsientos(plantaAlta, updatedPlantaBaja);
@@ -104,8 +113,8 @@ const Asientos = (props) => {
 
   useEffect(() => {
     if (props.item) {
-      setPlantaAlta(parseAsientos(props.item.plantaAlta));
-      setPlantaBaja(parseAsientos(props.item.plantaBaja));
+      setPlantaAlta(props.item.plantaAlta);
+      setPlantaBaja(props.item.plantaBaja);
     }
   }, []);
 

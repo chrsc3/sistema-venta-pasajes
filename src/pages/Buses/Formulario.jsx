@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import busService from "../../services/buses";
-import { stringifyAsientos } from "../../utils/ParserAsientos";
 import Asientos from "./Asientos";
 
 function AddEditForm(props) {
@@ -25,8 +24,8 @@ function AddEditForm(props) {
   const convertAsientos = (plantaAlta, plantaBaja) => {
     setValues({
       ...form,
-      plantaAlta: stringifyAsientos(plantaAlta),
-      plantaBaja: stringifyAsientos(plantaBaja),
+      plantaAlta: plantaAlta,
+      plantaBaja: plantaBaja,
     });
   };
 
@@ -95,26 +94,6 @@ function AddEditForm(props) {
             id="tipo"
             onChange={onChange}
             value={form.tipo === null ? "" : form.tipo}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="plantaAlta">Planta Alta</Label>
-          <Input
-            type="text"
-            name="plantaAlta"
-            id="plantaAlta"
-            onChange={onChange}
-            value={form.plantaAlta === null ? "" : form.plantaAlta}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="plantaBaja">Planta Baja</Label>
-          <Input
-            type="text"
-            name="plantaBaja"
-            id="plantaBaja"
-            onChange={onChange}
-            value={form.plantaBaja === null ? "" : form.plantaBaja}
           />
         </FormGroup>
 
