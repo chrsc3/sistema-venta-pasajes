@@ -8,6 +8,10 @@ import {
   Nav,
   NavItem,
   NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 const LogOut = () => {
   const Usercontext = useContext(UserContext);
@@ -24,46 +28,60 @@ const LogOut = () => {
 
 function NavComponent() {
   const [collapsed, setCollapsed] = useState(true);
-  const Usercontext = useContext(UserContext);
+  const User = useContext(UserContext);
 
   const toggleNavbar = () => setCollapsed(!collapsed);
 
   return (
     <div>
-      <Navbar color="success" dark container="fluid">
+      <Navbar color="success" dark expand="md" container="fluid">
         <NavbarToggler onClick={toggleNavbar} className="me-2" />
         <NavbarBrand href="/" className="me-auto">
-          {"Usuario: "} {Usercontext.user ? `${Usercontext.user}` : ""}
+          {"Usuario: "} {User.user.name ? User.user.name : ""}
         </NavbarBrand>
-        <LogOut />
+
         <Collapse isOpen={!collapsed} navbar>
-          <Nav navbar>
+          <Nav navbar className="ms-auto">
             <NavItem>
               <NavLink href="/">DashBoard</NavLink>
             </NavItem>
-            <NavItem>
-              <NavLink href="/usuarios">Usuarios</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/choferes">Choferes</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/roles">Roles</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/buses">Buses</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/viajes">Viajes</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/oficinas">Oficinas</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/ventas">Ventas</NavLink>
-            </NavItem>
+
+            {/* Dropdown para Usuarios */}
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Usuarios
+              </DropdownToggle>
+              <DropdownMenu end>
+                <DropdownItem href="/usuarios">Usuarios</DropdownItem>
+                <DropdownItem href="/roles">Roles</DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+
+            {/* Dropdown para Transporte */}
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Transporte
+              </DropdownToggle>
+              <DropdownMenu end>
+                <DropdownItem href="/choferes">Choferes</DropdownItem>
+                <DropdownItem href="/buses">Buses</DropdownItem>
+                <DropdownItem href="/viajes">Viajes</DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+
+            {/* Dropdown para Ventas */}
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Ventas
+              </DropdownToggle>
+              <DropdownMenu end>
+                <DropdownItem href="/oficinas">Oficinas</DropdownItem>
+                <DropdownItem href="/ventas">Ventas</DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
           </Nav>
         </Collapse>
+        <LogOut />
       </Navbar>
     </div>
   );

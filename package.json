@@ -12,11 +12,15 @@
   "dependencies": {
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "pdfmake": "^0.2.13",
+    "print-js": "^1.6.0",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
-    "reactstrap": "^9.2.2"
+    "react-to-print": "^3.0.1",
+    "reactstrap": "^9.2.2",
+    "sweetalert2": "^11.14.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

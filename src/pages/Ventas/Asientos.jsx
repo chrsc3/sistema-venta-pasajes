@@ -9,6 +9,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import Swal from "sweetalert2";
 import asientospaService from "../../services/asientospa";
 import asientospbService from "../../services/asientospb";
 import "./asientos.css"; // Asegúrate de crear un archivo CSS para personalizar estilos
@@ -20,65 +21,102 @@ const inicialPlantaBaja = [];
 const Asientos = (props) => {
   const [plantaAlta, setPlantaAlta] = useState(inicialPlantaAlta);
   const [plantaBaja, setPlantaBaja] = useState(inicialPlantaBaja);
+  const [asientosSelcionados, setAsientosSeleccionados] = useState([]);
 
-  const getSeatColor = (numAsiento) => {
-    if (numAsiento === "reservado") {
-      return "danger";
+  const getSeatColor = (estado) => {
+    if (estado === "seleccionado") {
+      return "warning";
     }
-    if (numAsiento === "libre") {
+    if (estado === "libre") {
       return "success";
     }
+    if (estado === "ocupado") {
+      return "danger";
+    }
   };
 
-  const reservaAsientoPa = (idAsiento, idViaje, numAsiento, estado) => {
-    estado == "reservado" ? (estado = "libre") : (estado = "reservado");
-    asientospaService
-      .update(idAsiento, idViaje, {
-        numAsiento: numAsiento,
-        estado: estado,
-        nombre: "",
-        ci: "",
-      })
-      .then((response) => {
-        setPlantaAlta(
-          plantaAlta.map((asiento) =>
-            asiento.idAsientoPa === idAsiento
-              ? {
-                  ...asiento,
-                  estado: response.estado,
-                }
-              : asiento
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating asientospa data:", error);
+  const selecionarAsiento = (asiento) => {
+    if (asiento.estado !== "ocupado" && asiento.estado !== "seleccionado") {
+      Swal.fire({
+        title: "Ingrese sus datos",
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="Nombre">' +
+          '<input id="swal-input2" class="swal2-input" placeholder="CI">',
+        focusConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        preConfirm: () => {
+          const nombre = document.getElementById("swal-input1").value;
+          const ci = document.getElementById("swal-input2").value;
+          if (!nombre || !ci) {
+            Swal.showValidationMessage("Por favor ingrese ambos datos");
+            return false;
+          }
+          return { nombre, ci };
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const { nombre, ci } = result.value;
+          if (asiento.estado === "libre") {
+            setAsientosSeleccionados([
+              ...asientosSelcionados,
+              { ...asiento, nombre, ci },
+            ]);
+            cambiarEstadoAsiento(
+              asiento.numAsiento,
+              "seleccionado",
+              nombre,
+              ci
+            );
+          }
+        }
       });
+    }
+    if (asiento.estado === "seleccionado") {
+      setAsientosSeleccionados(
+        asientosSelcionados.filter(
+          (asiento1) => asiento1.numAsiento !== asiento.numAsiento
+        )
+      );
+      cambiarEstadoAsiento(asiento.numAsiento, "libre", "", "", false);
+    }
   };
-  const reservaAsientoPb = (idAsiento, idViaje, numAsiento, estado) => {
-    estado == "reservado" ? (estado = "libre") : (estado = "reservado");
-    asientospbService
-      .update(idAsiento, idViaje, {
-        numAsiento: numAsiento,
-        estado: estado,
-        nombre: "",
-        ci: "",
-      })
-      .then((response) => {
-        setPlantaBaja(
-          plantaBaja.map((asiento) =>
-            asiento.idAsientoPb === idAsiento
-              ? {
-                  ...asiento,
-                  estado: response.estado,
-                }
-              : asiento
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating asientospb data:", error);
-      });
+
+  const cambiarEstadoAsiento = (numAsiento, estado, nombre, ci, venta) => {
+    plantaAlta.map((asiento) => {
+      if (asiento.numAsiento === numAsiento) {
+        asiento.estado = estado;
+        if (nombre && ci) {
+          asiento.nombre = nombre;
+          asiento.ci = ci;
+        }
+        if (venta === true) {
+          const asientoActualizado = { ...asiento, estado: estado, nombre, ci };
+          asientospaService.update(
+            asiento.idAsientoPa,
+            props.item.idViaje,
+            asientoActualizado
+          );
+        }
+      }
+    });
+    plantaBaja.map((asiento) => {
+      if (asiento.numAsiento === numAsiento) {
+        asiento.estado = estado;
+        if (nombre && ci) {
+          asiento.nombre = nombre;
+          asiento.ci = ci;
+        }
+        if (venta === true) {
+          const asientoActualizado = { ...asiento, estado, nombre, ci };
+          asientospbService.update(
+            asiento.idAsientoPb,
+            props.item.idViaje,
+            asientoActualizado
+          );
+        }
+      }
+    });
   };
 
   useEffect(() => {
@@ -101,7 +139,26 @@ const Asientos = (props) => {
         });
     }
   }, [props.item]);
+  const { onChangeAsientos } = props;
 
+  useEffect(() => {
+    onChangeAsientos(asientosSelcionados);
+  }, [asientosSelcionados, onChangeAsientos]);
+  useEffect(() => {
+    if (props.boletoRealizado === true) {
+      asientosSelcionados.map((asiento) => {
+        cambiarEstadoAsiento(
+          asiento.numAsiento,
+          "ocupado",
+          asiento.nombre,
+          asiento.ci,
+          true
+        );
+      });
+
+      setAsientosSeleccionados([]);
+    }
+  }, [props.boletoRealizado]);
   return (
     <Container>
       <Row>
@@ -121,14 +178,7 @@ const Asientos = (props) => {
                   <Card
                     color={getSeatColor(asiento.estado)}
                     className="asiento-card"
-                    onClick={() =>
-                      reservaAsientoPa(
-                        asiento.idAsientoPa,
-                        props.item.idViaje,
-                        asiento.numAsiento,
-                        asiento.estado
-                      )
-                    }
+                    onClick={() => selecionarAsiento(asiento)}
                   >
                     <CardImg
                       style={{
@@ -170,14 +220,7 @@ const Asientos = (props) => {
                   <Card
                     color={getSeatColor(asiento.estado)}
                     className="asiento-card"
-                    onClick={() =>
-                      reservaAsientoPb(
-                        asiento.idAsientoPb,
-                        props.item.idViaje,
-                        asiento.numAsiento,
-                        asiento.estado
-                      )
-                    }
+                    onClick={() => selecionarAsiento(asiento)}
                   >
                     <CardImg
                       width="100%"

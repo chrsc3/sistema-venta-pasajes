@@ -18,10 +18,8 @@ const Login = () => {
     loginService
       .login(credentials)
       .then((response) => {
-        User.updateUser(response.user);
-        window.localStorage.setItem("token", JSON.stringify(response.token));
-        window.localStorage.setItem("user", JSON.stringify(response.user));
-        User.updateUser(response.user);
+        User.updateUser(response);
+        window.localStorage.setItem("login", JSON.stringify(response));
         navigate("/");
         console.log("Logged in as:", response.name);
       })

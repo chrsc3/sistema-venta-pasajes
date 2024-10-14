@@ -5,13 +5,15 @@ import viajesService from "../../services/viajes";
 import busesService from "../../services/buses";
 import oficinasService from "../../services/oficinas";
 import choferService from "../../services/choferes";
+import { revertirFecha } from "../../utils/parserFecha";
 
 function AddEditForm(props) {
   const [form, setValues] = useState({
     idViaje: 0,
     origen: "",
     destino: "",
-    fechaViaje: "",
+    fechaViajeFecha: "",
+    fechaViajeHora: "",
     estado: "",
     Buses_idBus: 0,
     Oficinas_idOficina: 0,
@@ -31,8 +33,15 @@ function AddEditForm(props) {
 
   const submitFormAdd = (e) => {
     e.preventDefault();
+    const data = {
+      ...form,
+      fechaViaje: revertirFecha({
+        fecha: form.fechaViajeFecha,
+        hora: form.fechaViajeHora,
+      }),
+    };
     viajesService
-      .create(form)
+      .create(data)
       .then((response) => {
         props.addItemToState(response);
         props.toggle();
@@ -70,7 +79,8 @@ function AddEditForm(props) {
         idViaje,
         origen,
         destino,
-        fechaViaje,
+        fechaViajeFecha: fechaViaje.fecha,
+        fechaViajeHora: fechaViaje.hora,
         estado,
         Buses_idBus,
         Oficinas_idOficina,
@@ -129,25 +139,26 @@ function AddEditForm(props) {
         />
       </FormGroup>
       <FormGroup>
-        <Label for="fechaViaje">Fecha de Viaje</Label>
+        <Label for="fechaViajeFecha">Fecha de Viaje</Label>
         <Input
           type="date"
-          name="fechaViaje"
-          id="fechaViaje"
+          name="fechaViajeFecha"
+          id="fechaViajeFecha"
           onChange={onChange}
-          value={form.fechaViaje === null ? "" : form.fechaViaje}
+          value={form.fechaViajeFecha === null ? "" : form.fechaViajeFecha}
         />
       </FormGroup>
       <FormGroup>
-        <Label for="estado">Estado</Label>
+        <Label for="fechaViajeHora">Hora de Viaje</Label>
         <Input
-          type="text"
-          name="estado"
-          id="estado"
+          type="time"
+          name="fechaViajeHora"
+          id="fechaViajeHora"
           onChange={onChange}
-          value={form.estado === null ? "" : form.estado}
+          value={form.fechaViajeHora === null ? "" : form.fechaViajeHora}
         />
       </FormGroup>
+
       <FormGroup>
         <Label for="Buses_idBus">Bus</Label>
         <Input
