@@ -52,7 +52,7 @@ function Usuarios(props) {
     <Container className="usuarios">
       <Row>
         <Col>
-          <h1 style={{ margin: "20px 0" }}>CRUD Usuarios</h1>
+          <h1 style={{ margin: "20px 0" }}>Usuarios</h1>
         </Col>
       </Row>
       <Row>
@@ -66,15 +66,6 @@ function Usuarios(props) {
       </Row>
       <Row>
         <Col>
-          <CSVLink
-            filename={"db.csv"}
-            color="primary"
-            style={{ float: "left", marginRight: "10px" }}
-            className="btn btn-primary"
-            data={usuarios}
-          >
-            Download CSV
-          </CSVLink>
           <ModalForm
             buttonLabel="Añadir Usuario"
             addItemToState={addItemToState}

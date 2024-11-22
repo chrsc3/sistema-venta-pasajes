@@ -142,16 +142,19 @@ function AddEditForm(props) {
           value={form.user === null ? "" : form.user}
         />
       </FormGroup>
-      <FormGroup>
-        <Label for="password">Contraseña</Label>
-        <Input
-          type="text"
-          name="password"
-          id="password"
-          onChange={onChange}
-          value={form.password}
-        />
-      </FormGroup>
+      {props.item ? null : (
+        <FormGroup>
+          <Label for="password">Password</Label>
+          <Input
+            type="password"
+            name="password"
+            id="password"
+            onChange={onChange}
+            value={form.password === null ? "" : form.password}
+          />
+        </FormGroup>
+      )}
+
       <FormGroup>
         <Label for="Roles_idRol">Rol</Label>
         <Input

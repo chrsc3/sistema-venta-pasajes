@@ -41,7 +41,7 @@ function ModalForm(props) {
         {label}
       </Button>
     );
-    title = "Guardar Nuevo Usuario";
+    title = "Guardar Nuevo Rol";
   }
 
   return (

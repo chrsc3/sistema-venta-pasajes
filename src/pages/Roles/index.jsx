@@ -21,11 +21,18 @@ function Roles(props) {
   };
 
   const addItemToState = (rol) => {
+    setRoles([...roles, rol]);
     getItems();
   };
 
   const updateState = (rol) => {
-    getItems();
+    const updatedItems = roles.map((item) => {
+      if (item.idRol === rol.idRol) {
+        return rol;
+      }
+      return item;
+    });
+    setRoles(updatedItems);
   };
 
   const deleteItemFromState = (id) => {
@@ -42,7 +49,7 @@ function Roles(props) {
     <Container className="roles">
       <Row>
         <Col>
-          <h1 style={{ margin: "20px 0" }}>CRUD Roles</h1>
+          <h1 style={{ margin: "20px 0" }}>Roles</h1>
         </Col>
       </Row>
       <Row>

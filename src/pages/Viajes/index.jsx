@@ -5,9 +5,11 @@ import { Container, Row, Col } from "reactstrap";
 import ModalForm from "./Modal";
 import DataTable from "./Lista";
 import viajeService from "../../services/viajes";
+import busService from "../../services/buses";
 
 function Viajes(props) {
   const [viajes, setViajes] = useState([]);
+  const [buses, setBuses] = useState([]);
 
   const getItems = () => {
     viajeService
@@ -18,6 +20,9 @@ function Viajes(props) {
       .catch((error) => {
         alert("Error al obtener viajes", error);
       });
+    busService.getAll().then((response) => {
+      setBuses(response);
+    });
   };
 
   const addItemToState = (viaje) => {
@@ -50,13 +55,14 @@ function Viajes(props) {
     <Container className="viajes">
       <Row>
         <Col>
-          <h1 style={{ margin: "20px 0" }}>CRUD Viajes</h1>
+          <h1 style={{ margin: "20px 0" }}>Viajes</h1>
         </Col>
       </Row>
       <Row>
         <Col>
           <DataTable
             items={viajes}
+            buses={buses}
             updateState={updateState}
             deleteItemFromState={deleteItemFromState}
           />

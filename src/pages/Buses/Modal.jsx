@@ -30,7 +30,7 @@ function ModalForm(props) {
         {label}
       </Button>
     );
-    title = "Editar Usuario";
+    title = "Editar Bus";
   } else {
     button = (
       <Button
@@ -41,7 +41,7 @@ function ModalForm(props) {
         {label}
       </Button>
     );
-    title = "Guardar Nuevo Usuario";
+    title = "Guardar Nuevo Bus";
   }
 
   return (

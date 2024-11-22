@@ -1,12 +1,20 @@
 /* eslint-disable react/prop-types */
 import { Table, Button } from "reactstrap";
 import ModalForm from "./Modal";
-import busService from "../../services/buses";
+import viajeService from "../../services/viajes";
+
+import { useNavigate } from "react-router-dom";
+
 function DataTable(props) {
+  const navigate = useNavigate();
+  function navigateToVentas(idViaje) {
+    navigate(`/ventas/${idViaje}`);
+  }
+
   const deleteItem = (id) => {
     let confirmDelete = window.confirm("Delete item forever?");
     if (confirmDelete) {
-      busService
+      viajeService
         .remove(id)
         .then(() => {
           props.deleteItemFromState(id);
@@ -17,12 +25,14 @@ function DataTable(props) {
 
   const items = props.items.map((item) => {
     return (
-      <tr key={item.idBus}>
-        <th scope="row">{item.idBus}</th>
-        <td>{item.marca}</td>
-        <td>{item.placa}</td>
-        <td>{item.tipo}</td>
+      <tr key={item.idViaje}>
+        <th scope="row">{item.idViaje}</th>
+        <td>{item.origen}</td>
+        <td>{item.destino}</td>
+        <td>{item.fechaViaje.fecha}</td>
         <td>{item.estado}</td>
+        <td>{item.Buses_idBus}</td>
+        <td>{item.Oficinas_idOficina}</td>
         <td>
           <div style={{ width: "110px" }}>
             <ModalForm
@@ -30,8 +40,14 @@ function DataTable(props) {
               item={item}
               updateState={props.updateState}
             />{" "}
-            <Button color="danger" onClick={() => deleteItem(item.idBus)}>
+            <Button color="danger" onClick={() => deleteItem(item.idViaje)}>
               Eliminar
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => navigateToVentas(item.idViaje)}
+            >
+              Vender
             </Button>
           </div>
         </td>
@@ -44,10 +60,12 @@ function DataTable(props) {
       <thead>
         <tr>
           <th>ID</th>
-          <th>Marca</th>
-          <th>Placa</th>
-          <th>Tipo</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Fecha Viaje</th>
           <th>Estado</th>
+          <th>Bus ID</th>
+          <th>Oficina ID</th>
           <th>Actions</th>
         </tr>
       </thead>

@@ -50,7 +50,7 @@ function Buses(props) {
     <Container className="buses">
       <Row>
         <Col>
-          <h1 style={{ margin: "20px 0" }}>CRUD Buses</h1>
+          <h1 style={{ margin: "20px 0" }}>Buses</h1>
         </Col>
       </Row>
       <Row>

@@ -17,7 +17,7 @@ const LogOut = () => {
   const Usercontext = useContext(UserContext);
   const handleLogOut = () => {
     Usercontext.updateUser(null);
-    window.localStorage.removeItem("user");
+    window.localStorage.clear();
   };
   return (
     <NavLink href="/" onClick={handleLogOut} style={{ color: "white" }}>
@@ -32,6 +32,8 @@ function NavComponent() {
 
   const toggleNavbar = () => setCollapsed(!collapsed);
 
+  const hasPermission = (permission) => User.user.permisos.includes(permission);
+
   return (
     <div>
       <Navbar color="success" dark expand="md" container="fluid">
@@ -43,42 +45,61 @@ function NavComponent() {
         <Collapse isOpen={!collapsed} navbar>
           <Nav navbar className="ms-auto">
             <NavItem>
-              <NavLink href="/">DashBoard</NavLink>
+              <NavLink href="/">Inicio</NavLink>
             </NavItem>
 
-            {/* Dropdown para Usuarios */}
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Usuarios
-              </DropdownToggle>
-              <DropdownMenu end>
-                <DropdownItem href="/usuarios">Usuarios</DropdownItem>
-                <DropdownItem href="/roles">Roles</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
+            {hasPermission("usuarios") && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Usuarios
+                </DropdownToggle>
+                <DropdownMenu end>
+                  <DropdownItem href="/usuarios">Usuarios</DropdownItem>
+                  <DropdownItem href="/roles">Roles</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
 
-            {/* Dropdown para Transporte */}
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Transporte
-              </DropdownToggle>
-              <DropdownMenu end>
-                <DropdownItem href="/choferes">Choferes</DropdownItem>
-                <DropdownItem href="/buses">Buses</DropdownItem>
-                <DropdownItem href="/viajes">Viajes</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
+            {hasPermission("transporte") && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Transporte
+                </DropdownToggle>
+                <DropdownMenu end>
+                  <DropdownItem href="/choferes">Choferes</DropdownItem>
 
-            {/* Dropdown para Ventas */}
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Ventas
-              </DropdownToggle>
-              <DropdownMenu end>
-                <DropdownItem href="/oficinas">Oficinas</DropdownItem>
-                <DropdownItem href="/ventas">Ventas</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
+                  <DropdownItem href="/buses">Buses</DropdownItem>
+
+                  <DropdownItem href="/oficinas">Oficinas</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
+
+            {hasPermission("ventas") && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Ventas
+                </DropdownToggle>
+                <DropdownMenu end>
+                  <DropdownItem href="/viajes">Viajes</DropdownItem>
+                  <DropdownItem href="/ventas">Ventas</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
+            {hasPermission("reportes") && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Reportes
+                </DropdownToggle>
+                <DropdownMenu end>
+                  <DropdownItem href="/">Reporte de Viajes</DropdownItem>
+                  <DropdownItem href="/reporte-ventas">
+                    Reporte de Ventas
+                  </DropdownItem>
+                  <DropdownItem href="/">Reporte de Usuarios</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
           </Nav>
         </Collapse>
         <LogOut />

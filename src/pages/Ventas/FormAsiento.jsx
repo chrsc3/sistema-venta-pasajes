@@ -4,11 +4,10 @@ import Swal from "sweetalert2";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { UserContext } from "../../context/userContext";
 import boletoService from "../../services/boletos";
-import asientospaService from "../../services/asientospa";
-import asientospbService from "../../services/asientospb";
 import ticket from "../../utils/ticketBoleto";
+
 function AddPasajeroForm(props) {
-  const Usercontext = useContext(UserContext);
+  const User = useContext(UserContext);
   const [precioPasaje, setPrecioPasaje] = useState(0);
   const [detalleBoleto, setDetalleBoleto] = useState([
     {
@@ -23,7 +22,7 @@ function AddPasajeroForm(props) {
     nombre: "",
     ci: "",
     total: 0,
-    Usuarios_idUsuario: Usercontext.user.idUsuario,
+    Usuarios_idUsuario: User.user.idUsuario,
   });
 
   const onChange = (e) => {
@@ -41,6 +40,7 @@ function AddPasajeroForm(props) {
     const data = {
       ...form,
       total: detalleBoleto.length * precioPasaje,
+      Usuarios_idUsuario: User.user.idUsuario,
       detalleBoleto: detalleBoleto.map((detalle) => ({
         ...detalle,
         precio: precioPasaje,
@@ -84,6 +84,11 @@ function AddPasajeroForm(props) {
       }));
       console.log(props.selectAsientos);
       setDetalleBoleto(asientosSelcionados);
+      asientosSelcionados?.length > 0 &&
+        setValues({
+          nombre: asientosSelcionados[0].nombre,
+          ci: asientosSelcionados[0].ci,
+        });
     }
   }, [props.item, props.selectAsientos]);
 

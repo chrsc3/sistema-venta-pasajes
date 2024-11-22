@@ -10,6 +10,8 @@ import Buses from "./pages/Buses";
 import Viajes from "./pages/Viajes";
 import Ventas from "./pages/Ventas";
 import VentasNav from "./pages/Ventas/VentasNav";
+import Oficinas from "./pages/Oficinas";
+import ReporteVentas from "./pages/ReporteVentas";
 import { useContext } from "react";
 import { UserContext } from "./context/userContext";
 function App() {
@@ -23,11 +25,15 @@ function App() {
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/roles" element={<Roles />} />
             <Route path="/choferes" element={<Choferes />} />
-            <Route path="/oficinas" element={<h1>Oficinas</h1>} />
             <Route path="/buses" element={<Buses></Buses>} />
             <Route path="/viajes" element={<Viajes></Viajes>} />
             <Route path="/ventas" element={<VentasNav></VentasNav>} />
             <Route path="/ventas/:id" element={<Ventas></Ventas>} />
+            <Route path="/oficinas" element={<Oficinas></Oficinas>} />
+            <Route
+              path="/reporte-ventas"
+              element={<ReporteVentas></ReporteVentas>}
+            />
           </Routes>
         </div>
       ) : (

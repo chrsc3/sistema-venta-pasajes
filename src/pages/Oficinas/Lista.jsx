@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
 import { Table, Button } from "reactstrap";
 import ModalForm from "./Modal";
-import busService from "../../services/buses";
+import oficinaService from "../../services/oficinas";
+
 function DataTable(props) {
   const deleteItem = (id) => {
     let confirmDelete = window.confirm("Delete item forever?");
     if (confirmDelete) {
-      busService
+      oficinaService
         .remove(id)
         .then(() => {
           props.deleteItemFromState(id);
@@ -17,11 +18,12 @@ function DataTable(props) {
 
   const items = props.items.map((item) => {
     return (
-      <tr key={item.idBus}>
-        <th scope="row">{item.idBus}</th>
-        <td>{item.marca}</td>
-        <td>{item.placa}</td>
-        <td>{item.tipo}</td>
+      <tr key={item.idOficina}>
+        <th scope="row">{item.idOficina}</th>
+        <td>{item.nombre}</td>
+        <td>{item.ciudad}</td>
+        <td>{item.direccion}</td>
+        <td>{item.telefono}</td>
         <td>{item.estado}</td>
         <td>
           <div style={{ width: "110px" }}>
@@ -30,7 +32,7 @@ function DataTable(props) {
               item={item}
               updateState={props.updateState}
             />{" "}
-            <Button color="danger" onClick={() => deleteItem(item.idBus)}>
+            <Button color="danger" onClick={() => deleteItem(item.idOficina)}>
               Eliminar
             </Button>
           </div>
@@ -44,9 +46,10 @@ function DataTable(props) {
       <thead>
         <tr>
           <th>ID</th>
-          <th>Marca</th>
-          <th>Placa</th>
-          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Ciudad</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
           <th>Estado</th>
           <th>Actions</th>
         </tr>

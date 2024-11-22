@@ -50,7 +50,7 @@ function Choferes(props) {
     <Container className="choferes">
       <Row>
         <Col>
-          <h1 style={{ margin: "20px 0" }}>CRUD Choferes</h1>
+          <h1 style={{ margin: "20px 0" }}>Choferes</h1>
         </Col>
       </Row>
       <Row>

@@ -20,30 +20,24 @@ function ModalForm(props) {
   let button = "";
   let title = "";
 
-  if (label === "Edit") {
-    button = (
-      <Button
-        color="warning"
-        onClick={toggle}
-        style={{ float: "left", marginRight: "10px" }}
-      >
-        {label}
-      </Button>
-    );
-    title = "Editar Usuario";
-  } else {
-    button = (
+  if (props.selectAsientos && props.selectAsientos.length > 0) {
+    button = button = (
       <Button
         color="success"
         onClick={toggle}
-        style={{ float: "left", marginRight: "10px" }}
+        style={{
+          float: "left",
+          marginRight: "10px",
+          marginTop: "100px",
+          fontSize: "1.6em",
+          fontFamily: "Arial, sans-serif",
+        }}
       >
         {label}
       </Button>
     );
     title = "Venta de Pasajes";
   }
-
   return (
     <div>
       {button}

@@ -14,7 +14,7 @@ function AddEditForm(props) {
     plantaAlta: "",
     plantaBaja: "",
   });
-
+  const [imagen, setImagen] = useState(null);
   const onChange = (e) => {
     setValues({
       ...form,
@@ -32,7 +32,7 @@ function AddEditForm(props) {
   const submitFormAdd = (e) => {
     e.preventDefault();
     busService
-      .create(form)
+      .create({ ...form, imagen })
       .then((response) => {
         props.addItemToState(response);
         props.toggle();
@@ -96,6 +96,36 @@ function AddEditForm(props) {
             value={form.tipo === null ? "" : form.tipo}
           />
         </FormGroup>
+        <FormGroup>
+          <Label for="imagen">Imagen</Label>
+          <Input
+            type="file"
+            name="imagen"
+            id="imagen"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              setImagen(file);
+            }}
+          />
+        </FormGroup>
+        {imagen && (
+          <FormGroup>
+            <Label for="preview">Vista previa de la imagen</Label>
+            <div>
+              <img
+                src={URL.createObjectURL(imagen)}
+                alt="Vista previa"
+                style={{
+                  width: "90%",
+                  height: "auto",
+                  display: "flex",
+                  margin: "auto",
+                  marginBottom: "10px",
+                }}
+              />
+            </div>
+          </FormGroup>
+        )}
 
         <Button>Guardar</Button>
       </Form>

@@ -25,8 +25,7 @@ function AddEditForm(props) {
       .create(form)
       .then((response) => {
         console.log(response);
-        const item = { ...response, roles_has_permisos: [] };
-        props.addItemToState(item);
+        props.addItemToState(response);
         props.toggle();
       })
       .catch((error) => {
@@ -41,8 +40,7 @@ function AddEditForm(props) {
       .update(form.idRol, form)
       .then((response) => {
         console.log(response);
-        const item = { ...response, roles_has_permisos: [] };
-        props.updateState(item);
+        props.updateState(response);
         props.toggle();
       })
       .catch((error) => {

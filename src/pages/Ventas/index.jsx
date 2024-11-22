@@ -54,6 +54,11 @@ function Ventas(props) {
             </p>
           </Col>
           <Col>
+            <img
+              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgqIKjzM6a3HFhVpYSXiz6ucRSUXw1rbLAXguiAP7NkWxvTpgMq7CiBDIdYuaqt5ainxv8eqhG5DmXQm5lPWiXpp5ED2wYGnPH5Esnk0MWTDYu0HZw8ihI0qxaQYCsqbxBKLhyphenhyphen0pbrMRbmm/s1600/marcopolo_paradiso1800dd_solimoes.jpg"
+              alt="Imagen del viaje"
+              style={{ width: "500px", height: "auto" }}
+            />
             <ModalForm
               buttonLabel="Vender"
               selectAsientos={selectAsientos}
@@ -70,7 +75,7 @@ function Ventas(props) {
         />
       </Row>
       <Row>
-        <ListaBoletos />
+        <ListaBoletos viaje={viaje} boletoRealizado={boletoRealizado} />
       </Row>
     </Container>
   );

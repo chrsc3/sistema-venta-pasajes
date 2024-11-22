@@ -39,6 +39,9 @@ function AddEditForm(props) {
         fecha: form.fechaViajeFecha,
         hora: form.fechaViajeHora,
       }),
+      Oficinas_idOficina: oficinas.find(
+        (oficina) => oficina.ciudad === form.origen
+      ).idOficina,
     };
     viajesService
       .create(data)
@@ -121,22 +124,40 @@ function AddEditForm(props) {
       <FormGroup>
         <Label for="origen">Origen</Label>
         <Input
-          type="text"
+          type="select"
           name="origen"
           id="origen"
           onChange={onChange}
           value={form.origen === null ? "" : form.origen}
-        />
+        >
+          <option value="0">Seleccione un Origen</option>
+          {oficinas.map((oficina) => {
+            return (
+              <option key={oficina.idOficina} value={oficina.ciudad}>
+                {oficina.ciudad}
+              </option>
+            );
+          })}
+        </Input>
       </FormGroup>
       <FormGroup>
         <Label for="destino">Destino</Label>
         <Input
-          type="text"
+          type="select"
           name="destino"
           id="destino"
           onChange={onChange}
           value={form.destino === null ? "" : form.destino}
-        />
+        >
+          <option value="0">Seleccione un Destino</option>
+          {oficinas.map((oficina) => {
+            return (
+              <option key={oficina.idOficina} value={oficina.ciudad}>
+                {oficina.ciudad}
+              </option>
+            );
+          })}
+        </Input>
       </FormGroup>
       <FormGroup>
         <Label for="fechaViajeFecha">Fecha de Viaje</Label>
@@ -173,25 +194,6 @@ function AddEditForm(props) {
             return (
               <option key={bus.idBus} value={bus.idBus}>
                 {bus.placa}
-              </option>
-            );
-          })}
-        </Input>
-      </FormGroup>
-      <FormGroup>
-        <Label for="Oficinas_idOficina">Oficina</Label>
-        <Input
-          type="select"
-          name="Oficinas_idOficina"
-          id="Oficinas_idOficina"
-          onChange={onChange}
-          value={form.Oficinas_idOficina}
-        >
-          <option value="0">Seleccione una oficina</option>
-          {oficinas.map((oficina) => {
-            return (
-              <option key={oficina.idOficina} value={oficina.idOficina}>
-                {oficina.nombre}
               </option>
             );
           })}

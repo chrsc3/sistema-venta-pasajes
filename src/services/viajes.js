@@ -46,7 +46,15 @@ const create = async (newObject) => {
   };
 
   const response = await axios.post(baseUrl, newObject, config);
-  return response.data;
+  const data = response.data;
+  if (data && data.fechaViaje) {
+    const fechaViaje = new Date(data.fechaViaje);
+    data.fechaViaje = {
+      fecha: fechaViaje.toISOString().split("T")[0],
+      hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
+    };
+  }
+  return data;
 };
 
 const update = async (id, newObject) => {

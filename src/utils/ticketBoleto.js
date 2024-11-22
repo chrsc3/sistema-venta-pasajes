@@ -10,7 +10,7 @@ const generateTicket = async (output, boleto) => {
       alignment: "center",
     },
     { text: "EMPRESA DE TRANSPORTE", style: "header", margin: [0, 10, 0, 0] },
-    { text: "CHACUEÑO S.A.", style: "header" },
+    { text: "CHAQUEÑO S.A.", style: "header" },
     { text: "Terminal Bomidal,Santa Cruz", style: "header" },
     { text: "NIT 5661335013", style: "header" },
 

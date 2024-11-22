@@ -10,7 +10,10 @@ function DataTable(props) {
   function navigateToVentas(idViaje) {
     navigate(`/ventas/${idViaje}`);
   }
-
+  const placa = (idBus) => {
+    let bus = props.buses.find((bus) => bus.idBus === idBus);
+    return bus ? bus.placa : "Bus no encontrado";
+  };
   const deleteItem = (id) => {
     let confirmDelete = window.confirm("Delete item forever?");
     if (confirmDelete) {
@@ -31,8 +34,7 @@ function DataTable(props) {
         <td>{item.destino}</td>
         <td>{item.fechaViaje.fecha}</td>
         <td>{item.estado}</td>
-        <td>{item.Buses_idBus}</td>
-        <td>{item.Oficinas_idOficina}</td>
+        <td>{placa(item.Buses_idBus)}</td>
         <td>
           <div style={{ width: "110px" }}>
             <ModalForm
@@ -64,8 +66,7 @@ function DataTable(props) {
           <th>Destino</th>
           <th>Fecha Viaje</th>
           <th>Estado</th>
-          <th>Bus ID</th>
-          <th>Oficina ID</th>
+          <th>Placa Bus</th>
           <th>Actions</th>
         </tr>
       </thead>
