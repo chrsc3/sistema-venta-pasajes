@@ -9,4 +9,28 @@ const getDay = () => {
   });
 };
 
-export default { getDay };
+const getWeek = () => {
+  const request = axios.get(`${baseUrl}/ventasSemana`);
+  return request.then((response) => {
+    const data = response.data;
+    return data;
+  });
+};
+
+const getMonth = () => {
+  const request = axios.get(`${baseUrl}/ventasMes`);
+  return request.then((response) => {
+    const data = response.data;
+    return data;
+  });
+};
+
+const getStatistics = () => {
+  const request = axios.get(`${baseUrl}/estadisticas`);
+  return request.then((response) => {
+    const data = response.data;
+    return data;
+  });
+};
+
+export default { getDay, getWeek, getMonth, getStatistics };

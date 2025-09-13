@@ -15,34 +15,34 @@ function ModalForm(props) {
       &times;
     </button>
   );
+  
   const label = props.buttonLabel;
+  const isEdit = props.item != null;
+  const buttonProps = props.buttonProps || {};
 
-  let button = "";
-  let title = "";
+  // Determinar propiedades del botón por defecto
+  const defaultButtonProps = {
+    color: isEdit ? "primary" : "success",
+    onClick: toggle,
+    ...buttonProps
+  };
 
-  if (label === "Edit") {
-    button = (
-      <Button
-        color="warning"
-        onClick={toggle}
-        style={{ float: "left", marginRight: "10px" }}
-      >
-        {label}
-      </Button>
-    );
-    title = "Editar Usuario";
-  } else {
-    button = (
-      <Button
-        color="success"
-        onClick={toggle}
-        style={{ float: "left", marginRight: "10px" }}
-      >
-        {label}
-      </Button>
-    );
-    title = "Guardar Nuevo Usuario";
+  // Si no se especifican estilos customizados, usar los por defecto
+  if (!buttonProps.className && !defaultButtonProps.className) {
+    defaultButtonProps.style = { 
+      float: "left", 
+      marginRight: "10px", 
+      ...buttonProps.style 
+    };
   }
+
+  const button = (
+    <Button {...defaultButtonProps}>
+      {label}
+    </Button>
+  );
+
+  const title = isEdit ? "Editar Usuario" : "Agregar Nuevo Usuario";
 
   return (
     <div>
@@ -53,8 +53,10 @@ function ModalForm(props) {
         className={props.className}
         backdrop={"static"}
         keyboard={false}
+        size="lg"
       >
         <ModalHeader toggle={toggle} close={closeBtn}>
+          <i className={`fas ${isEdit ? 'fa-edit' : 'fa-plus'} mr-2`}></i>
           {title}
         </ModalHeader>
         <ModalBody>
