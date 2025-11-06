@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { UserContext } from "../../context/userContext";
 import boletoService from "../../services/boletos";
+import pagosService from "../../services/pagos";
 import ticket from "../../utils/ticketBoleto";
 
 function AddPasajeroForm(props) {
@@ -24,6 +25,7 @@ function AddPasajeroForm(props) {
     total: 0,
     Usuarios_idUsuario: User.user.idUsuario,
   });
+  const [metodoPago, setMetodoPago] = useState("efectivo");
 
   const onChange = (e) => {
     setValues({
@@ -48,11 +50,27 @@ function AddPasajeroForm(props) {
     };
     boletoService
       .create(data)
-      .then((response) => {
+      .then(async (response) => {
+        // Crear pago inmediatamente después del boleto
+        try {
+          await pagosService.crearPago({
+            monto: data.total,
+            metodo: metodoPago,
+            Boletos_idBoleto: response.idBoleto,
+            Usuarios_idUsuario: User.user.idUsuario,
+          });
+        } catch (errPago) {
+          console.error("Error creando pago:", errPago);
+          Swal.fire({
+            icon: "warning",
+            title: "Boleto creado, pago falló",
+            text: "El boleto se creó pero el registro del pago falló.",
+          });
+        }
         Swal.fire({
           icon: "success",
-          title: "Boleto creado",
-          text: "El boleto ha sido creado exitosamente",
+          title: "Venta registrada",
+          text: "Boleto y pago registrados exitosamente",
         });
         props.toggle();
         props.onChangeBoletoRealizado();
@@ -137,6 +155,21 @@ function AddPasajeroForm(props) {
         <div>
           <Label>{detalleBoleto.length * precioPasaje}</Label>
         </div>
+      </FormGroup>
+      <FormGroup>
+        <Label for="metodoPago">Método de Pago</Label>
+        <Input
+          type="select"
+          name="metodoPago"
+          id="metodoPago"
+          value={metodoPago}
+          onChange={(e) => setMetodoPago(e.target.value)}
+        >
+          <option value="efectivo">Efectivo</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="transferencia">Transferencia</option>
+          <option value="QR">QR</option>
+        </Input>
       </FormGroup>
       <Button>Vender</Button>
     </Form>
