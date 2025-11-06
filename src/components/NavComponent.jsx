@@ -92,11 +92,15 @@ function NavComponent() {
                   Reportes
                 </DropdownToggle>
                 <DropdownMenu end>
-                  <DropdownItem href="/">Reporte de Viajes</DropdownItem>
+                  <DropdownItem href="/reporte-viajes">
+                    Reporte de Viajes
+                  </DropdownItem>
                   <DropdownItem href="/reporte-ventas">
                     Reporte de Ventas
                   </DropdownItem>
-                  <DropdownItem href="/">Reporte de Usuarios</DropdownItem>
+                  <DropdownItem href="/reporte-usuarios">
+                    Reporte de Usuarios
+                  </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             )}

@@ -30,4 +30,25 @@ const getVentasEntreFechas = (fechaInicio, fechaFin) => {
   });
 };
 
-export default { getVentasViaje, getVentasEntreFechas };
+const getReporteViajes = (fechaInicio, fechaFin) => {
+  const request = axios.post(`${baseUrl}/viajes`, {
+    fechaInicio,
+    fechaFin,
+  });
+  return request.then((response) => response.data);
+};
+
+const getReporteUsuarios = (fechaInicio, fechaFin) => {
+  const request = axios.post(`${baseUrl}/usuarios`, {
+    fechaInicio,
+    fechaFin,
+  });
+  return request.then((response) => response.data);
+};
+
+export default {
+  getVentasViaje,
+  getVentasEntreFechas,
+  getReporteViajes,
+  getReporteUsuarios,
+};
