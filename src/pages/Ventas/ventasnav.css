@@ -1,0 +1,225 @@
+/* Estilos para VentasNav - Punto de Venta */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #858796;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.filter-buttons .btn {
+  transition: all 0.2s ease;
+}
+
+.filter-buttons .btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Tarjetas de Viaje */
+.viaje-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0.125rem 0.5rem rgba(58, 59, 69, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.viaje-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.25);
+}
+
+.viaje-card-header {
+  border-bottom: 2px solid #f8f9fc;
+  padding-bottom: 15px;
+}
+
+.viaje-route {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #5a5c69;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.route-arrow {
+  margin: 8px 0;
+  text-align: center;
+  color: #858796;
+  font-size: 1.2rem;
+}
+
+.viaje-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8f9fc;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #5a5c69;
+  font-size: 0.95rem;
+}
+
+.info-item i {
+  width: 20px;
+  color: #4e73df;
+  text-align: center;
+}
+
+.btn-vender {
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #4e73df, #224abe);
+  border: none;
+}
+
+.btn-vender:hover {
+  background: linear-gradient(135deg, #224abe, #1a3a92);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 115, 223, 0.4);
+}
+
+/* Estado Empty */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0.125rem 0.5rem rgba(58, 59, 69, 0.1);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  color: #e3e6f0;
+  margin-bottom: 20px;
+}
+
+.empty-state h4 {
+  color: #5a5c69;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #858796;
+  margin-bottom: 0;
+}
+
+/* Animaciones */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badges personalizados */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-buttons {
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .filter-buttons .btn {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .viaje-route {
+    font-size: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .viaje-card {
+    margin-bottom: 15px;
+  }
+
+  .btn-vender {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus,
+.form-control:focus {
+  outline: 2px solid #4e73df;
+  outline-offset: 2px;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Estilos para el input de búsqueda */
+.search-bar .input-group {
+  box-shadow: 0 0.125rem 0.5rem rgba(58, 59, 69, 0.15);
+}
+
+.search-bar .input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.search-bar input {
+  border: 1px solid #e3e6f0;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+}
+
+.search-bar input::placeholder {
+  color: #858796;
+}
+
+/* Botón de actualizar */
+.text-center .btn-light {
+  border: 1px solid #e3e6f0;
+  transition: all 0.2s ease;
+}
+
+.text-center .btn-light:hover {
+  background-color: #f8f9fc;
+  border-color: #d1d3e2;
+  transform: translateY(-2px);
+}
