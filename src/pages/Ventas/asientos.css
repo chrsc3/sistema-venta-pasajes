@@ -1,8 +1,9 @@
 .asientos-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* Define 4 columnas */
-  grid-auto-rows: 40px; /* Define la altura de las filas */
+  grid-auto-rows: 60px; /* Aumentada para dar espacio al nombre */
   gap: 10px; /* Espacio entre las celdas */
+  padding-top: 25px; /* Espacio para los nombres que aparecen arriba */
 }
 
 .asiento-card {
@@ -11,6 +12,13 @@
   cursor: pointer;
   height: 40px;
   border: 1px solid #ccc;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.asiento-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .pasillo {
@@ -25,4 +33,5 @@
   border: 1px solid #ccc;
   grid-column: span 1;
   height: 40px;
+  position: relative;
 }

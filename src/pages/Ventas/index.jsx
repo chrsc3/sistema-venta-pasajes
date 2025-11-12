@@ -12,13 +12,22 @@ function Ventas(props) {
   const match = useMatch("/ventas/:id");
   const [viaje, setViaje] = useState(null);
   const [boletoRealizado, setBoletoRealizado] = useState(false);
+  const [esReserva, setEsReserva] = useState(false);
   const [selectAsientos, setSelectAsientos] = useState([]);
+  const [recargarAsientos, setRecargarAsientos] = useState(0);
 
   const onChangeAsientos = (selectAsientos) => {
     setSelectAsientos(selectAsientos);
   };
-  const onChangeBoletoRealizado = () => {
+  const onChangeBoletoRealizado = (tipoOperacion = false) => {
+    setEsReserva(tipoOperacion);
     setBoletoRealizado(!boletoRealizado);
+    // También forzar recarga de asientos después de venta/reserva
+    setRecargarAsientos((prev) => prev + 1);
+  };
+  const onBoletoActualizado = () => {
+    // Forzar recarga de asientos (para confirmar reserva o anular boleto)
+    setRecargarAsientos((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -72,10 +81,16 @@ function Ventas(props) {
           item={viaje}
           onChangeAsientos={onChangeAsientos}
           boletoRealizado={boletoRealizado}
+          esReserva={esReserva}
+          recargarAsientos={recargarAsientos}
         />
       </Row>
       <Row>
-        <ListaBoletos viaje={viaje} boletoRealizado={boletoRealizado} />
+        <ListaBoletos
+          viaje={viaje}
+          boletoRealizado={boletoRealizado}
+          onBoletoActualizado={onBoletoActualizado}
+        />
       </Row>
     </Container>
   );

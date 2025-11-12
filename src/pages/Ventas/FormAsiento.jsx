@@ -37,44 +37,54 @@ function AddPasajeroForm(props) {
     setPrecioPasaje(e.target.value);
   };
 
-  const submitFormAdd = (e) => {
+  const submitFormAdd = (e, esReserva = false) => {
     e.preventDefault();
     const data = {
       ...form,
       total: detalleBoleto.length * precioPasaje,
       Usuarios_idUsuario: User.user.idUsuario,
+      esReserva: esReserva,
       detalleBoleto: detalleBoleto.map((detalle) => ({
         ...detalle,
         precio: precioPasaje,
       })),
     };
+
     boletoService
       .create(data)
       .then(async (response) => {
-        // Crear pago inmediatamente después del boleto
-        try {
-          await pagosService.crearPago({
-            monto: data.total,
-            metodo: metodoPago,
-            Boletos_idBoleto: response.idBoleto,
-            Usuarios_idUsuario: User.user.idUsuario,
-          });
-        } catch (errPago) {
-          console.error("Error creando pago:", errPago);
+        // Solo crear pago si es venta, no si es reserva
+        if (!esReserva) {
+          try {
+            await pagosService.crearPago({
+              monto: data.total,
+              metodo: metodoPago,
+              Boletos_idBoleto: response.idBoleto,
+              Usuarios_idUsuario: User.user.idUsuario,
+            });
+          } catch (errPago) {
+            console.error("Error creando pago:", errPago);
+            Swal.fire({
+              icon: "warning",
+              title: "Boleto creado, pago falló",
+              text: "El boleto se creó pero el registro del pago falló.",
+            });
+          }
           Swal.fire({
-            icon: "warning",
-            title: "Boleto creado, pago falló",
-            text: "El boleto se creó pero el registro del pago falló.",
+            icon: "success",
+            title: "Venta registrada",
+            text: "Boleto y pago registrados exitosamente",
+          });
+          ticket("print", response);
+        } else {
+          Swal.fire({
+            icon: "success",
+            title: "Reserva registrada",
+            text: "La reserva ha sido registrada exitosamente",
           });
         }
-        Swal.fire({
-          icon: "success",
-          title: "Venta registrada",
-          text: "Boleto y pago registrados exitosamente",
-        });
         props.toggle();
-        props.onChangeBoletoRealizado();
-        ticket("print", response);
+        props.onChangeBoletoRealizado(esReserva);
       })
       .catch((error) => {
         console.error("Error adding boleto:", error);
@@ -111,7 +121,7 @@ function AddPasajeroForm(props) {
   }, [props.item, props.selectAsientos]);
 
   return (
-    <Form onSubmit={props.item ? submitFormEdit : submitFormAdd}>
+    <Form onSubmit={(e) => submitFormAdd(e, false)}>
       <FormGroup>
         <Label for="nombre">Nombre para el Boleto</Label>
         <Input
@@ -120,6 +130,7 @@ function AddPasajeroForm(props) {
           id="nombre"
           onChange={onChange}
           value={form.nombre === null ? "" : form.nombre}
+          required
         />
       </FormGroup>
       <FormGroup>
@@ -130,16 +141,20 @@ function AddPasajeroForm(props) {
           id="ci"
           onChange={onChange}
           value={form.ci === null ? "" : form.ci}
+          required
         />
       </FormGroup>
       <FormGroup>
         <Label for="precioPasaje">Precio del Pasaje</Label>
         <Input
-          type="text"
+          type="number"
           name="precioPasaje"
           id="precioPasaje"
           onChange={onChangePrecio}
           value={precioPasaje === null ? "" : precioPasaje}
+          required
+          min="0"
+          step="0.01"
         />
       </FormGroup>
       <FormGroup>
@@ -153,7 +168,7 @@ function AddPasajeroForm(props) {
       <FormGroup>
         <Label>Total:</Label>
         <div>
-          <Label>{detalleBoleto.length * precioPasaje}</Label>
+          <Label>Bs. {(detalleBoleto.length * precioPasaje).toFixed(2)}</Label>
         </div>
       </FormGroup>
       <FormGroup>
@@ -171,7 +186,18 @@ function AddPasajeroForm(props) {
           <option value="QR">QR</option>
         </Input>
       </FormGroup>
-      <Button>Vender</Button>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <Button color="success" type="submit">
+          Vender
+        </Button>
+        <Button
+          color="info"
+          type="button"
+          onClick={(e) => submitFormAdd(e, true)}
+        >
+          Reservar
+        </Button>
+      </div>
     </Form>
   );
 }

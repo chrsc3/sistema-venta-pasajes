@@ -40,6 +40,30 @@ const create = async (newObject) => {
   const response = await axios.post(baseUrl, newObject, config);
   return response.data;
 };
+
+const confirmarReserva = async (id, nuevoTotal = null) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const data = nuevoTotal ? { total: nuevoTotal } : {};
+  const response = await axios.patch(
+    `${baseUrl}/${id}/confirmar`,
+    data,
+    config
+  );
+  return response.data;
+};
+
+const anularBoleto = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const response = await axios.patch(`${baseUrl}/${id}/anular`, {}, config);
+  return response.data;
+};
+
 const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -49,4 +73,12 @@ const remove = async (id) => {
   return response;
 };
 
-export default { getAll, getOne, create, remove, setToken };
+export default {
+  getAll,
+  getOne,
+  create,
+  confirmarReserva,
+  anularBoleto,
+  remove,
+  setToken,
+};

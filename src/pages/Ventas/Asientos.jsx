@@ -33,10 +33,30 @@ const Asientos = (props) => {
     if (estado === "ocupado") {
       return "danger";
     }
+    if (estado === "reservado") {
+      return "info";
+    }
   };
 
   const selecionarAsiento = (asiento) => {
-    if (asiento.estado !== "ocupado" && asiento.estado !== "seleccionado") {
+    // Mostrar información si el asiento está ocupado o reservado
+    if (asiento.estado === "ocupado" || asiento.estado === "reservado") {
+      Swal.fire({
+        title:
+          asiento.estado === "ocupado"
+            ? "Asiento Ocupado"
+            : "Asiento Reservado",
+        html: `
+          <p><strong>Nombre:</strong> ${asiento.nombre || "N/A"}</p>
+          <p><strong>CI:</strong> ${asiento.ci || "N/A"}</p>
+        `,
+        icon: "info",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (asiento.estado !== "seleccionado") {
       Swal.fire({
         title: "Ingrese sus datos",
         html:
@@ -138,29 +158,73 @@ const Asientos = (props) => {
           console.error("Error fetching asientospb data:", error);
         });
     }
-  }, [props.item]);
+  }, [props.item, props.recargarAsientos]);
   const { onChangeAsientos } = props;
 
   useEffect(() => {
     onChangeAsientos(asientosSelcionados);
   }, [asientosSelcionados, onChangeAsientos]);
+
   useEffect(() => {
     if (props.boletoRealizado === true) {
-      asientosSelcionados.map((asiento) => {
-        cambiarEstadoAsiento(
-          asiento.numAsiento,
-          "ocupado",
-          asiento.nombre,
-          asiento.ci,
-          true
-        );
-      });
-
+      // Limpiar selección después de crear boleto
       setAsientosSeleccionados([]);
+      // Los asientos se recargan automáticamente por el useEffect que escucha recargarAsientos
     }
   }, [props.boletoRealizado]);
   return (
     <Container>
+      <Row style={{ marginBottom: "20px" }}>
+        <Col>
+          <h4>Leyenda:</h4>
+          <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#28a745",
+                  borderRadius: "3px",
+                }}
+              ></div>
+              <span>Libre</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#ffc107",
+                  borderRadius: "3px",
+                }}
+              ></div>
+              <span>Seleccionado</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#17a2b8",
+                  borderRadius: "3px",
+                }}
+              ></div>
+              <span>Reservado</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#dc3545",
+                  borderRadius: "3px",
+                }}
+              ></div>
+              <span>Ocupado</span>
+            </div>
+          </div>
+        </Col>
+      </Row>
       <Row>
         <Col>
           <h3>Planta Alta</h3>
@@ -175,30 +239,60 @@ const Asientos = (props) => {
                 }`}
               >
                 {index % 4 !== 2 && asiento.numAsiento != 0 && (
-                  <Card
-                    color={getSeatColor(asiento.estado)}
-                    className="asiento-card"
-                    onClick={() => selecionarAsiento(asiento)}
-                  >
-                    <CardImg
-                      style={{
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                      src={imgAsiento}
-                      alt="Seat icon"
-                    />
-                    <CardImgOverlay>
-                      <CardText
+                  <div style={{ position: "relative" }}>
+                    <Card
+                      color={getSeatColor(asiento.estado)}
+                      className="asiento-card"
+                      onClick={() => selecionarAsiento(asiento)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <CardImg
                         style={{
-                          color: "white",
-                          textAlign: "center",
+                          height: "100%",
+                          objectFit: "contain",
                         }}
-                      >
-                        {asiento.numAsiento}
-                      </CardText>
-                    </CardImgOverlay>
-                  </Card>
+                        src={imgAsiento}
+                        alt="Seat icon"
+                      />
+                      <CardImgOverlay>
+                        <CardText
+                          style={{
+                            color: "white",
+                            textAlign: "center",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {asiento.numAsiento}
+                        </CardText>
+                      </CardImgOverlay>
+                    </Card>
+                    {(asiento.estado === "ocupado" ||
+                      asiento.estado === "reservado") &&
+                      asiento.nombre &&
+                      asiento.nombre.trim() !== "" && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "-20px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            background:
+                              asiento.estado === "ocupado"
+                                ? "#dc3545"
+                                : "#17a2b8",
+                            color: "white",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            fontSize: "10px",
+                            whiteSpace: "nowrap",
+                            fontWeight: "bold",
+                            zIndex: 10,
+                          }}
+                        >
+                          {asiento.nombre}
+                        </div>
+                      )}
+                  </div>
                 )}
               </div>
             ))}
@@ -217,26 +311,57 @@ const Asientos = (props) => {
                 }`}
               >
                 {index % 4 !== 2 && asiento.numAsiento != 0 && (
-                  <Card
-                    color={getSeatColor(asiento.estado)}
-                    className="asiento-card"
-                    onClick={() => selecionarAsiento(asiento)}
-                  >
-                    <CardImg
-                      width="100%"
-                      style={{
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
-                      src={imgAsiento}
-                      alt="Seat icon"
-                    />
-                    <CardImgOverlay>
-                      <CardText style={{ color: "white" }}>
-                        {asiento.numAsiento}
-                      </CardText>
-                    </CardImgOverlay>
-                  </Card>
+                  <div style={{ position: "relative" }}>
+                    <Card
+                      color={getSeatColor(asiento.estado)}
+                      className="asiento-card"
+                      onClick={() => selecionarAsiento(asiento)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <CardImg
+                        width="100%"
+                        style={{
+                          height: "100%",
+                          objectFit: "contain",
+                        }}
+                        src={imgAsiento}
+                        alt="Seat icon"
+                      />
+                      <CardImgOverlay>
+                        <CardText
+                          style={{ color: "white", fontWeight: "bold" }}
+                        >
+                          {asiento.numAsiento}
+                        </CardText>
+                      </CardImgOverlay>
+                    </Card>
+                    {(asiento.estado === "ocupado" ||
+                      asiento.estado === "reservado") &&
+                      asiento.nombre &&
+                      asiento.nombre.trim() !== "" && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "-20px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            background:
+                              asiento.estado === "ocupado"
+                                ? "#dc3545"
+                                : "#17a2b8",
+                            color: "white",
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                            fontSize: "10px",
+                            whiteSpace: "nowrap",
+                            fontWeight: "bold",
+                            zIndex: 10,
+                          }}
+                        >
+                          {asiento.nombre}
+                        </div>
+                      )}
+                  </div>
                 )}
               </div>
             ))}
