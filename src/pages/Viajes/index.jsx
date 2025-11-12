@@ -27,10 +27,21 @@ function Viajes(props) {
 
   const getItems = () => {
     setLoading(true);
-    Promise.all([viajeService.getAll(), busService.getAll()])
+    // Para administración queremos TODOS los viajes (incluye pasados) ordenados de más reciente a más antiguo
+    Promise.all([viajeService.getAllAdmin(), busService.getAll()])
       .then(([viajesResponse, busesResponse]) => {
-        setViajes(viajesResponse);
-        setFilteredViajes(viajesResponse);
+        // Orden de seguridad en cliente (backend ya devuelve DESC)
+        const sorted = [...viajesResponse].sort((a, b) => {
+          try {
+            const da = new Date(`${a.fechaViaje.fecha}T${a.fechaViaje.hora}`);
+            const db = new Date(`${b.fechaViaje.fecha}T${b.fechaViaje.hora}`);
+            return db - da; // más reciente primero
+          } catch (e) {
+            return 0;
+          }
+        });
+        setViajes(sorted);
+        setFilteredViajes(sorted);
         setBuses(busesResponse);
       })
       .catch((error) => {

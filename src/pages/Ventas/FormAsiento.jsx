@@ -88,10 +88,13 @@ function AddPasajeroForm(props) {
       })
       .catch((error) => {
         console.error("Error adding boleto:", error);
+        const message =
+          error?.response?.data?.error ||
+          "Error al crear el boleto: Datos inválidos";
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: "Error al crear el boleto: Datos inválidos",
+          title: "No se pudo vender",
+          text: message,
         });
       });
   };

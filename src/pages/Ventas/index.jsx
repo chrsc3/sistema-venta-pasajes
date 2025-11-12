@@ -72,6 +72,7 @@ function Ventas(props) {
               buttonLabel="Vender"
               selectAsientos={selectAsientos}
               onChangeBoletoRealizado={onChangeBoletoRealizado}
+              item={viaje}
             />
           </Col>
         </Row>

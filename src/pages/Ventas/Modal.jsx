@@ -20,8 +20,16 @@ function ModalForm(props) {
   let button = "";
   let title = "";
 
-  if (props.selectAsientos && props.selectAsientos.length > 0) {
-    button = button = (
+  const isPast = props.item?.isPast;
+  if (isPast) {
+    button = (
+      <p style={{ color: "#b71c1c", marginTop: "100px", fontWeight: 600 }}>
+        Este viaje ya ha salido. No se pueden realizar ventas.
+      </p>
+    );
+    title = "Venta de Pasajes";
+  } else if (props.selectAsientos && props.selectAsientos.length > 0) {
+    button = (
       <Button
         color="success"
         onClick={toggle}
