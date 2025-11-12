@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 import "./choferes.css";
 import { useState, useEffect } from "react";
-import { 
-  Container, 
-  Row, 
-  Col, 
-  Card, 
-  CardBody, 
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
   Button,
   Badge,
   InputGroup,
   Input,
   InputGroupText,
-  Alert
+  Alert,
 } from "reactstrap";
 import ModalForm from "./Modal";
 import ChoferesCards from "./ChoferesCards";
@@ -70,10 +70,11 @@ function Choferes(props) {
     if (!term) {
       setFilteredChoferes(choferesArray);
     } else {
-      const filtered = choferesArray.filter(chofer =>
-        chofer.nombre.toLowerCase().includes(term.toLowerCase()) ||
-        chofer.telefono?.toLowerCase().includes(term.toLowerCase()) ||
-        chofer.numLicencia?.toLowerCase().includes(term.toLowerCase())
+      const filtered = choferesArray.filter(
+        (chofer) =>
+          chofer.nombre.toLowerCase().includes(term.toLowerCase()) ||
+          chofer.telefono?.toLowerCase().includes(term.toLowerCase()) ||
+          chofer.numLicencia?.toLowerCase().includes(term.toLowerCase())
       );
       setFilteredChoferes(filtered);
     }
@@ -95,53 +96,24 @@ function Choferes(props) {
   }, []);
 
   return (
-    <div>
-      {/* Header mejorado */}
-      <div className="choferes-header">
-        <Container>
-          <Row className="align-items-center">
-            <Col md="8">
-              <h1>
-                <i className="fas fa-users mr-3"></i>
-                Gestión de Choferes
-              </h1>
-              <p className="mb-0 mt-2" style={{opacity: 0.9}}>
-                Administra los choferes de la flota El Chaqueño
-              </p>
-            </Col>
-            <Col md="4">
-              <div className="choferes-stats text-center">
-                <h3 className="mb-1">{choferes.length}</h3>
-                <small>Choferes Registrados</small>
-              </div>
-            </Col>
-          </Row>
-        </Container>
+    <div className="page-container fade-in">
+      {/* Header unificado */}
+      <div className="page-header">
+        <h1>
+          <i className="fas fa-id-card mr-3"></i>
+          Gestión de Choferes
+        </h1>
+        <p className="page-header-subtitle">
+          Administra los choferes de la flota El Chaqueño
+        </p>
       </div>
 
-      <Container className="choferes mt-4">
-        {/* Barra de búsqueda y estadísticas */}
-        <Row className="mb-4">
-          <Col md="8">
-            <Card className="shadow-sm">
-              <CardBody>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="mb-0">
-                    <i className="fas fa-search mr-2 text-primary"></i>
-                    Buscar Choferes
-                  </h5>
-                  {searchTerm && (
-                    <Button 
-                      color="secondary" 
-                      size="sm" 
-                      onClick={clearSearch}
-                      outline
-                    >
-                      <i className="fas fa-times mr-1"></i>
-                      Limpiar
-                    </Button>
-                  )}
-                </div>
+      {/* Barra de acciones */}
+      <Card className="page-actions">
+        <CardBody>
+          <Row className="align-items-center">
+            <Col md="6" className="mb-3 mb-md-0">
+              <div className="search-bar">
                 <InputGroup>
                   <InputGroupText>
                     <i className="fas fa-search"></i>
@@ -152,50 +124,35 @@ function Choferes(props) {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
+                  {searchTerm && (
+                    <Button color="light" onClick={clearSearch}>
+                      <i className="fas fa-times"></i>
+                    </Button>
+                  )}
                 </InputGroup>
-                {searchTerm && (
-                  <small className="text-muted mt-2 d-block">
-                    Mostrando {filteredChoferes.length} de {choferes.length} choferes
-                  </small>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="4">
-            <Card className="shadow-sm">
-              <CardBody className="text-center">
-                <h6 className="text-muted mb-2">Acciones Rápidas</h6>
-                <ModalForm
-                  buttonLabel="Añadir Chofer"
-                  addItemToState={addItemToState}
-                  buttonProps={{
-                    color: "success",
-                    size: "lg",
-                    block: true
-                  }}
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Estado de carga */}
-        {loading ? (
-          <Row>
-            <Col>
-              <Card className="text-center py-5">
-                <CardBody>
-                  <div className="spinner-border text-primary mb-3" role="status">
-                    <span className="sr-only">Cargando...</span>
-                  </div>
-                  <h5 className="text-muted">Cargando choferes...</h5>
-                </CardBody>
-              </Card>
+              </div>
+            </Col>
+            <Col md="6" className="text-md-right">
+              <ModalForm
+                buttonLabel="Añadir Chofer"
+                addItemToState={addItemToState}
+              />
             </Col>
           </Row>
-        ) : (
-          <>
-            {/* Tarjetas de choferes */}
+        </CardBody>
+      </Card>
+
+      {/* Estado de carga */}
+      {loading ? (
+        <div className="loading-container">
+          <div className="spinner-border text-primary" role="status">
+            <span className="sr-only">Cargando...</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Tarjetas de choferes */}
+          <Container>
             <ChoferesCards
               items={filteredChoferes}
               updateState={updateState}
@@ -204,34 +161,15 @@ function Choferes(props) {
 
             {/* Mensaje cuando no hay resultados de búsqueda */}
             {searchTerm && filteredChoferes.length === 0 && (
-              <Row>
-                <Col>
-                  <Alert color="info" className="text-center">
-                    <i className="fas fa-search fa-2x mb-3"></i>
-                    <h5>No se encontraron choferes</h5>
-                    <p className="mb-0">
-                      No hay choferes que coincidan con "{searchTerm}". 
-                      Intenta con otros términos de búsqueda.
-                    </p>
-                  </Alert>
-                </Col>
-              </Row>
+              <div className="empty-state">
+                <i className="fas fa-id-card"></i>
+                <h4>No se encontraron choferes</h4>
+                <p>No hay choferes que coincidan con "{searchTerm}"</p>
+              </div>
             )}
-          </>
-        )}
-
-        {/* Botón flotante para agregar (móvil) */}
-        <div className="d-block d-md-none">
-          <ModalForm
-            buttonLabel={<i className="fas fa-plus"></i>}
-            addItemToState={addItemToState}
-            buttonProps={{
-              color: "primary",
-              className: "add-chofer-btn"
-            }}
-          />
-        </div>
-      </Container>
+          </Container>
+        </>
+      )}
     </div>
   );
 }

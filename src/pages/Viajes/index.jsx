@@ -1,32 +1,51 @@
 /* eslint-disable no-unused-vars */
 import "./viajes.css";
 import { useState, useEffect } from "react";
-import { Container, Row, Col } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Button,
+  InputGroup,
+  Input,
+  InputGroupText,
+} from "reactstrap";
 import ModalForm from "./Modal";
 import DataTable from "./Lista";
 import viajeService from "../../services/viajes";
 import busService from "../../services/buses";
+import { CSVLink } from "react-csv";
 
 function Viajes(props) {
   const [viajes, setViajes] = useState([]);
   const [buses, setBuses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredViajes, setFilteredViajes] = useState([]);
 
   const getItems = () => {
-    viajeService
-      .getAll()
-      .then((response) => {
-        setViajes(response);
+    setLoading(true);
+    Promise.all([viajeService.getAll(), busService.getAll()])
+      .then(([viajesResponse, busesResponse]) => {
+        setViajes(viajesResponse);
+        setFilteredViajes(viajesResponse);
+        setBuses(busesResponse);
       })
       .catch((error) => {
-        alert("Error al obtener viajes", error);
+        console.error("Error al obtener datos:", error);
+        alert("Error al obtener viajes");
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    busService.getAll().then((response) => {
-      setBuses(response);
-    });
   };
 
   const addItemToState = (viaje) => {
-    setViajes(viajes.concat(viaje));
+    const newViajes = viajes.concat(viaje);
+    setViajes(newViajes);
+    filterViajes(searchTerm, newViajes);
   };
 
   const updateState = (viaje) => {
@@ -39,44 +58,149 @@ function Viajes(props) {
       ...viajes.slice(itemIndex + 1),
     ];
     setViajes(newArray);
+    filterViajes(searchTerm, newArray);
   };
 
   const deleteItemFromState = (id) => {
     console.log(id);
     const updatedItems = viajes.filter((viaje) => viaje.idViaje !== id);
     setViajes(updatedItems);
+    filterViajes(searchTerm, updatedItems);
+  };
+
+  const filterViajes = (term, viajesArray = viajes) => {
+    if (!term) {
+      setFilteredViajes(viajesArray);
+    } else {
+      const filtered = viajesArray.filter(
+        (viaje) =>
+          viaje.origen?.toLowerCase().includes(term.toLowerCase()) ||
+          viaje.destino?.toLowerCase().includes(term.toLowerCase()) ||
+          viaje.Bus?.placa?.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredViajes(filtered);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    filterViajes(term);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+    setFilteredViajes(viajes);
   };
 
   useEffect(() => {
     getItems();
   }, []);
 
+  // Preparar datos para CSV
+  const csvData = viajes.map((viaje) => ({
+    ID: viaje.idViaje,
+    Origen: viaje.origen,
+    Destino: viaje.destino,
+    "Fecha Salida": viaje.fechaSalida,
+    "Fecha Llegada": viaje.fechaLlegada,
+    Precio: viaje.precio,
+    Bus: viaje.Bus?.placa || "No asignado",
+  }));
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="sr-only">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Container className="viajes">
-      <Row>
-        <Col>
-          <h1 style={{ margin: "20px 0" }}>Viajes</h1>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <DataTable
-            items={viajes}
-            buses={buses}
-            updateState={updateState}
-            deleteItemFromState={deleteItemFromState}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <ModalForm
-            buttonLabel="Añadir Viaje"
-            addItemToState={addItemToState}
-          />
-        </Col>
-      </Row>
-    </Container>
+    <div className="page-container fade-in">
+      {/* Header */}
+      <div className="page-header">
+        <h1>
+          <i className="fas fa-route mr-3"></i>
+          Gestión de Viajes
+        </h1>
+        <p className="page-header-subtitle">
+          Programa y administra las rutas de transporte
+        </p>
+      </div>
+
+      {/* Barra de acciones */}
+      <Card className="page-actions">
+        <CardBody>
+          <Row className="align-items-center">
+            <Col md="6" className="mb-3 mb-md-0">
+              <div className="search-bar">
+                <InputGroup>
+                  <InputGroupText>
+                    <i className="fas fa-search"></i>
+                  </InputGroupText>
+                  <Input
+                    type="text"
+                    placeholder="Buscar por origen, destino o bus..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
+                  {searchTerm && (
+                    <Button color="light" onClick={clearSearch}>
+                      <i className="fas fa-times"></i>
+                    </Button>
+                  )}
+                </InputGroup>
+              </div>
+            </Col>
+            <Col md="6" className="text-md-right">
+              <ModalForm
+                buttonLabel="Añadir Viaje"
+                addItemToState={addItemToState}
+              />
+              {viajes.length > 0 && (
+                <CSVLink
+                  data={csvData}
+                  filename={`viajes_${
+                    new Date().toISOString().split("T")[0]
+                  }.csv`}
+                  className="btn btn-success ml-2"
+                >
+                  <i className="fas fa-file-csv mr-2"></i>
+                  Exportar CSV
+                </CSVLink>
+              )}
+            </Col>
+          </Row>
+        </CardBody>
+      </Card>
+
+      {/* Contenido */}
+      <div className="content-card">
+        <div className="content-card-body">
+          {filteredViajes.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-route"></i>
+              <h4>No se encontraron viajes</h4>
+              <p>
+                {searchTerm
+                  ? "Intenta con otros términos de búsqueda"
+                  : "Comienza programando un nuevo viaje"}
+              </p>
+            </div>
+          ) : (
+            <DataTable
+              items={filteredViajes}
+              buses={buses}
+              updateState={updateState}
+              deleteItemFromState={deleteItemFromState}
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

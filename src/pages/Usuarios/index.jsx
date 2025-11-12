@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 import "./usuarios.css";
 import { useState, useEffect } from "react";
-import { 
-  Container, 
-  Row, 
-  Col, 
-  Card, 
-  CardBody, 
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
   Button,
   Badge,
   InputGroup,
   Input,
   InputGroupText,
-  Alert
+  Alert,
 } from "reactstrap";
 import ModalForm from "./Modal";
 import UsuariosCards from "./UsuariosCards";
@@ -71,12 +71,13 @@ function Usuarios(props) {
     if (!term) {
       setFilteredUsuarios(usuariosArray);
     } else {
-      const filtered = usuariosArray.filter(usuario =>
-        usuario.nombre?.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.apellido?.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.user?.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.telefono?.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.direccion?.toLowerCase().includes(term.toLowerCase())
+      const filtered = usuariosArray.filter(
+        (usuario) =>
+          usuario.nombre?.toLowerCase().includes(term.toLowerCase()) ||
+          usuario.apellido?.toLowerCase().includes(term.toLowerCase()) ||
+          usuario.user?.toLowerCase().includes(term.toLowerCase()) ||
+          usuario.telefono?.toLowerCase().includes(term.toLowerCase()) ||
+          usuario.direccion?.toLowerCase().includes(term.toLowerCase())
       );
       setFilteredUsuarios(filtered);
     }
@@ -94,7 +95,7 @@ function Usuarios(props) {
   };
 
   // Preparar datos para CSV
-  const csvData = usuarios.map(usuario => ({
+  const csvData = usuarios.map((usuario) => ({
     ID: usuario.idUsuario,
     Nombre: usuario.nombre,
     Apellido: usuario.apellido,
@@ -108,118 +109,75 @@ function Usuarios(props) {
   }, []);
 
   return (
-    <div>
-      {/* Header mejorado */}
-      <div className="usuarios-header">
-        <Container>
-          <Row className="align-items-center">
-            <Col md="8">
-              <h1>
-                <i className="fas fa-users mr-3"></i>
-                Gestión de Usuarios
-              </h1>
-              <p className="mb-0 mt-2" style={{opacity: 0.9}}>
-                Administra los usuarios del sistema de venta de pasajes
-              </p>
-            </Col>
-            <Col md="4">
-              <div className="usuarios-stats text-center">
-                <h3 className="mb-1">{usuarios.length}</h3>
-                <small>Usuarios Registrados</small>
-              </div>
-            </Col>
-          </Row>
-        </Container>
+    <div className="page-container fade-in">
+      {/* Header unificado */}
+      <div className="page-header">
+        <h1>
+          <i className="fas fa-users-cog mr-3"></i>
+          Gestión de Usuarios
+        </h1>
+        <p className="page-header-subtitle">
+          Administra los usuarios del sistema de venta de pasajes
+        </p>
       </div>
 
-      <Container className="usuarios mt-4">
-        {/* Barra de búsqueda y herramientas */}
-        <Row className="mb-4">
-          <Col md="8">
-            <Card className="shadow-sm">
-              <CardBody>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="mb-0">
-                    <i className="fas fa-search mr-2 text-primary"></i>
-                    Buscar Usuarios
-                  </h5>
-                  {searchTerm && (
-                    <Button 
-                      color="secondary" 
-                      size="sm" 
-                      onClick={clearSearch}
-                      outline
-                    >
-                      <i className="fas fa-times mr-1"></i>
-                      Limpiar
-                    </Button>
-                  )}
-                </div>
+      {/* Barra de acciones */}
+      <Card className="page-actions">
+        <CardBody>
+          <Row className="align-items-center">
+            <Col md="6" className="mb-3 mb-md-0">
+              <div className="search-bar">
                 <InputGroup>
                   <InputGroupText>
                     <i className="fas fa-search"></i>
                   </InputGroupText>
                   <Input
                     type="text"
-                    placeholder="Buscar por nombre, apellido, usuario, teléfono o dirección..."
+                    placeholder="Buscar por nombre, apellido, usuario o teléfono..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
+                  {searchTerm && (
+                    <Button color="light" onClick={clearSearch}>
+                      <i className="fas fa-times"></i>
+                    </Button>
+                  )}
                 </InputGroup>
-                {searchTerm && (
-                  <small className="text-muted mt-2 d-block">
-                    Mostrando {filteredUsuarios.length} de {usuarios.length} usuarios
-                  </small>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="4">
-            <Card className="shadow-sm">
-              <CardBody>
-                <h6 className="text-muted mb-3">Acciones Rápidas</h6>
-                <ModalForm
-                  buttonLabel="Añadir Usuario"
-                  addItemToState={addItemToState}
-                  buttonProps={{
-                    color: "success",
-                    size: "lg",
-                    block: true,
-                    className: "mb-2"
-                  }}
-                />
-                {usuarios.length > 0 && (
-                  <CSVLink
-                    data={csvData}
-                    filename="usuarios.csv"
-                    className="btn btn-outline-primary btn-block"
-                  >
-                    <i className="fas fa-download mr-2"></i>
-                    Exportar CSV
-                  </CSVLink>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Estado de carga */}
-        {loading ? (
-          <Row>
-            <Col>
-              <Card className="text-center py-5">
-                <CardBody>
-                  <div className="spinner-border text-primary mb-3" role="status">
-                    <span className="sr-only">Cargando...</span>
-                  </div>
-                  <h5 className="text-muted">Cargando usuarios...</h5>
-                </CardBody>
-              </Card>
+              </div>
+            </Col>
+            <Col md="6" className="text-md-right">
+              <ModalForm
+                buttonLabel="Añadir Usuario"
+                addItemToState={addItemToState}
+              />
+              {usuarios.length > 0 && (
+                <CSVLink
+                  data={csvData}
+                  filename={`usuarios_${
+                    new Date().toISOString().split("T")[0]
+                  }.csv`}
+                  className="btn btn-success ml-2"
+                >
+                  <i className="fas fa-file-csv mr-2"></i>
+                  Exportar CSV
+                </CSVLink>
+              )}
             </Col>
           </Row>
-        ) : (
-          <>
-            {/* Tarjetas de usuarios */}
+        </CardBody>
+      </Card>
+
+      {/* Estado de carga */}
+      {loading ? (
+        <div className="loading-container">
+          <div className="spinner-border text-primary" role="status">
+            <span className="sr-only">Cargando...</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Tarjetas de usuarios */}
+          <Container>
             <UsuariosCards
               items={filteredUsuarios}
               updateState={updateState}
@@ -228,34 +186,15 @@ function Usuarios(props) {
 
             {/* Mensaje cuando no hay resultados de búsqueda */}
             {searchTerm && filteredUsuarios.length === 0 && (
-              <Row>
-                <Col>
-                  <Alert color="info" className="text-center">
-                    <i className="fas fa-search fa-2x mb-3"></i>
-                    <h5>No se encontraron usuarios</h5>
-                    <p className="mb-0">
-                      No hay usuarios que coincidan con "{searchTerm}". 
-                      Intenta con otros términos de búsqueda.
-                    </p>
-                  </Alert>
-                </Col>
-              </Row>
+              <div className="empty-state">
+                <i className="fas fa-users-cog"></i>
+                <h4>No se encontraron usuarios</h4>
+                <p>No hay usuarios que coincidan con "{searchTerm}"</p>
+              </div>
             )}
-          </>
-        )}
-
-        {/* Botón flotante para agregar (móvil) */}
-        <div className="d-block d-md-none">
-          <ModalForm
-            buttonLabel={<i className="fas fa-plus"></i>}
-            addItemToState={addItemToState}
-            buttonProps={{
-              color: "primary",
-              className: "add-usuario-btn"
-            }}
-          />
-        </div>
-      </Container>
+          </Container>
+        </>
+      )}
     </div>
   );
 }
