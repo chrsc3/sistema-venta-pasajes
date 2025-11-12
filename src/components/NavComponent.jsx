@@ -60,16 +60,15 @@ function NavComponent() {
               </UncontrolledDropdown>
             )}
 
-            {hasPermission("transporte") && (
+            {hasPermission("viajes") && (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
-                  Transporte
+                  Viajes
                 </DropdownToggle>
                 <DropdownMenu end>
-                  <DropdownItem href="/choferes">Choferes</DropdownItem>
-
+                  <DropdownItem href="/viajes">Viajes</DropdownItem>
                   <DropdownItem href="/buses">Buses</DropdownItem>
-
+                  <DropdownItem href="/choferes">Choferes</DropdownItem>
                   <DropdownItem href="/oficinas">Oficinas</DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
@@ -81,8 +80,7 @@ function NavComponent() {
                   Ventas
                 </DropdownToggle>
                 <DropdownMenu end>
-                  <DropdownItem href="/viajes">Viajes</DropdownItem>
-                  <DropdownItem href="/ventas">Ventas</DropdownItem>
+                  <DropdownItem href="/ventas">Boletos</DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             )}
