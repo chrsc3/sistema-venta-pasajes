@@ -15,6 +15,7 @@ import {
 import reportesService from "../../services/reportes";
 import Lista from "./Lista";
 import { CSVLink } from "react-csv";
+import exportTablePdf from "../../utils/exportTablePdf";
 
 function ReporteViajes(props) {
   const [items, setItems] = useState([]);
@@ -211,18 +212,54 @@ function ReporteViajes(props) {
         </Row>
       )}
 
-      {/* Botón de Exportar */}
+      {/* Botones de Exportar */}
       {items.length > 0 && (
         <Card className="mb-3">
           <CardBody>
-            <CSVLink
-              data={items}
-              filename={`reporte-viajes_${fechaInicio}_${fechaFin}.csv`}
-              className="btn btn-success"
-            >
-              <i className="fas fa-file-csv mr-2"></i>
-              Exportar Reporte CSV
-            </CSVLink>
+            <div className="d-flex flex-wrap gap-2">
+              <CSVLink
+                data={items}
+                filename={`reporte-viajes_${fechaInicio}_${fechaFin}.csv`}
+                className="btn btn-success mr-2"
+              >
+                <i className="fas fa-file-csv mr-2"></i>
+                Exportar CSV
+              </CSVLink>
+              <Button
+                color="danger"
+                onClick={() => {
+                  const columns = [
+                    { header: "ID Viaje", field: "idViaje", width: 60 },
+                    { header: "Origen", field: "origen" },
+                    { header: "Destino", field: "destino" },
+                    { header: "Fecha", field: "fechaViaje", width: 80 },
+                    {
+                      header: "Asientos Vendidos",
+                      field: "asientosVendidos",
+                      width: 90,
+                    },
+                    { header: "Boletos", field: "cantidadBoletos", width: 70 },
+                    {
+                      header: "Total Ventas",
+                      mapper: (r) =>
+                        `Bs. ${Number(r.totalVentas || 0).toFixed(2)}`,
+                      width: 90,
+                    },
+                  ];
+                  exportTablePdf({
+                    title: "Reporte de Viajes",
+                    subtitle: `Período: ${fechaInicio} a ${fechaFin}`,
+                    columns,
+                    rows: items,
+                    fileName: `reporte-viajes_${fechaInicio}_${fechaFin}.pdf`,
+                    orientation: "landscape",
+                  });
+                }}
+              >
+                <i className="fas fa-file-pdf mr-2"></i>
+                Exportar PDF
+              </Button>
+            </div>
           </CardBody>
         </Card>
       )}

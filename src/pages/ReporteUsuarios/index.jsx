@@ -15,6 +15,7 @@ import {
 import reportesService from "../../services/reportes";
 import Lista from "./Lista";
 import { CSVLink } from "react-csv";
+import exportTablePdf from "../../utils/exportTablePdf";
 
 function ReporteUsuarios(props) {
   const [items, setItems] = useState([]);
@@ -185,18 +186,57 @@ function ReporteUsuarios(props) {
         </Row>
       )}
 
-      {/* Botón de Exportar */}
+      {/* Botones de Exportar */}
       {items.length > 0 && (
         <Card className="mb-3">
           <CardBody>
-            <CSVLink
-              data={items}
-              filename={`reporte-usuarios_${fechaInicio}_${fechaFin}.csv`}
-              className="btn btn-success"
-            >
-              <i className="fas fa-file-csv mr-2"></i>
-              Exportar Reporte CSV
-            </CSVLink>
+            <div className="d-flex flex-wrap gap-2">
+              <CSVLink
+                data={items}
+                filename={`reporte-usuarios_${fechaInicio}_${fechaFin}.csv`}
+                className="btn btn-success mr-2"
+              >
+                <i className="fas fa-file-csv mr-2"></i>
+                Exportar CSV
+              </CSVLink>
+              <Button
+                color="danger"
+                onClick={() => {
+                  const columns = [
+                    { header: "ID", field: "idUsuario", width: 50 },
+                    {
+                      header: "Nombre",
+                      mapper: (r) =>
+                        `${r.nombre || ""} ${r.apellido || ""}`.trim(),
+                    },
+                    { header: "Usuario", field: "user" },
+                    {
+                      header: "Boletos Vendidos",
+                      field: "cantidadBoletos",
+                      width: 80,
+                    },
+                    {
+                      header: "Total Ventas",
+                      mapper: (r) =>
+                        `Bs. ${Number(r.totalVentas || 0).toFixed(2)}`,
+                      width: 80,
+                    },
+                    { header: "Estado", field: "estado", width: 60 },
+                  ];
+                  exportTablePdf({
+                    title: "Reporte de Usuarios",
+                    subtitle: `Período: ${fechaInicio} a ${fechaFin}`,
+                    columns,
+                    rows: items,
+                    fileName: `reporte-usuarios_${fechaInicio}_${fechaFin}.pdf`,
+                    orientation: "landscape",
+                  });
+                }}
+              >
+                <i className="fas fa-file-pdf mr-2"></i>
+                Exportar PDF
+              </Button>
+            </div>
           </CardBody>
         </Card>
       )}

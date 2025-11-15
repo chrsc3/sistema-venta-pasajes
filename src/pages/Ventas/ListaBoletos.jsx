@@ -85,7 +85,7 @@ function ListaBoletos(props) {
 
         Swal.fire({
           icon: "success",
-          title: "Reserva Confirmada",
+          title: "Venta Exitosamente Registrada",
           text: `La reserva se ha convertido en venta exitosamente. Monto: Bs. ${parseFloat(
             nuevoMonto
           ).toFixed(2)}`,

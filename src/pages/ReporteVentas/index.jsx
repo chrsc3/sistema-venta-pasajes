@@ -16,6 +16,7 @@ import reportesService from "../../services/reportes";
 import viajesService from "../../services/viajes";
 import Lista from "./Lista";
 import { CSVLink } from "react-csv";
+import exportTablePdf from "../../utils/exportTablePdf";
 
 function ReporteVentas(props) {
   const [items, setItems] = useState([]);
@@ -189,18 +190,47 @@ function ReporteVentas(props) {
         </Row>
       )}
 
-      {/* Botón de Exportar */}
+      {/* Botones de Exportar */}
       {items.length > 0 && (
         <Card className="mb-3">
           <CardBody>
-            <CSVLink
-              data={items}
-              filename={`reporte-ventas_${fechaInicio}_${fechaFin}.csv`}
-              className="btn btn-success"
-            >
-              <i className="fas fa-file-csv mr-2"></i>
-              Exportar Reporte CSV
-            </CSVLink>
+            <div className="d-flex flex-wrap gap-2">
+              <CSVLink
+                data={items}
+                filename={`reporte-ventas_${fechaInicio}_${fechaFin}.csv`}
+                className="btn btn-success mr-2"
+              >
+                <i className="fas fa-file-csv mr-2"></i>
+                Exportar CSV
+              </CSVLink>
+              <Button
+                color="danger"
+                onClick={() => {
+                  const columns = [
+                    { header: "ID Boleto", field: "idBoleto", width: 60 },
+                    { header: "Nombre", field: "nombre" },
+                    { header: "Fecha", field: "fecha.fecha", width: 80 },
+                    {
+                      header: "Total",
+                      mapper: (r) => `Bs. ${Number(r.total || 0).toFixed(2)}`,
+                      width: 70,
+                    },
+                    { header: "Usuario", field: "usuario.nombre" },
+                  ];
+                  exportTablePdf({
+                    title: "Reporte de Ventas",
+                    subtitle: `Período: ${fechaInicio} a ${fechaFin}`,
+                    columns,
+                    rows: items,
+                    fileName: `reporte-ventas_${fechaInicio}_${fechaFin}.pdf`,
+                    orientation: "landscape",
+                  });
+                }}
+              >
+                <i className="fas fa-file-pdf mr-2"></i>
+                Exportar PDF
+              </Button>
+            </div>
           </CardBody>
         </Card>
       )}
