@@ -14,6 +14,7 @@ import Oficinas from "./pages/Oficinas";
 import ReporteVentas from "./pages/ReporteVentas";
 import ReporteViajes from "./pages/ReporteViajes";
 import ReporteUsuarios from "./pages/ReporteUsuarios";
+import ClientesPage from "./pages/Clientes";
 import { useContext } from "react";
 import { UserContext } from "./context/userContext";
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <Route path="/ventas" element={<VentasNav></VentasNav>} />
             <Route path="/ventas/:id" element={<Ventas></Ventas>} />
             <Route path="/oficinas" element={<Oficinas></Oficinas>} />
+            <Route path="/clientes" element={<ClientesPage />} />
             <Route
               path="/reporte-ventas"
               element={<ReporteVentas></ReporteVentas>}

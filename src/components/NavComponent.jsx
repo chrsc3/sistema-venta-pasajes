@@ -81,6 +81,7 @@ function NavComponent() {
                 </DropdownToggle>
                 <DropdownMenu end>
                   <DropdownItem href="/ventas">Boletos</DropdownItem>
+                  <DropdownItem href="/clientes">Clientes</DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
             )}

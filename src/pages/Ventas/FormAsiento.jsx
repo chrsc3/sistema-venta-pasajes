@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { UserContext } from "../../context/userContext";
 import boletoService from "../../services/boletos";
+import clientesService from "../../services/clientes";
 import pagosService from "../../services/pagos";
 import ticket from "../../utils/ticketBoleto";
 
@@ -25,6 +26,9 @@ function AddPasajeroForm(props) {
     total: 0,
     Usuarios_idUsuario: User.user.idUsuario,
   });
+  const [clientes, setClientes] = useState([]);
+  const [selectedClienteId, setSelectedClienteId] = useState(null);
+  const [filtroCliente, setFiltroCliente] = useState("");
   const [metodoPago, setMetodoPago] = useState("efectivo");
 
   const onChange = (e) => {
@@ -48,6 +52,7 @@ function AddPasajeroForm(props) {
         ...detalle,
         precio: precioPasaje,
       })),
+      ...(selectedClienteId ? { Clientes_idCliente: selectedClienteId } : {}),
     };
 
     boletoService
@@ -121,10 +126,79 @@ function AddPasajeroForm(props) {
           ci: asientosSelcionados[0].ci,
         });
     }
+    // cargar clientes una sola vez
+    clientesService
+      .getAll()
+      .then((data) => setClientes(data))
+      .catch((err) => console.error("Error cargando clientes", err));
   }, [props.item, props.selectAsientos]);
+
+  const onSelectCliente = (e) => {
+    const id = e.target.value ? parseInt(e.target.value) : null;
+    setSelectedClienteId(id);
+    if (!id) return;
+    const cliente = clientes.find((c) => c.idCliente === id);
+    if (cliente) {
+      setValues({ ...form, nombre: cliente.nombre, ci: cliente.ci });
+      // reflejar en cada asiento
+      setDetalleBoleto(
+        detalleBoleto.map((d) => ({
+          ...d,
+          nombre: cliente.nombre,
+          ci: cliente.ci,
+        }))
+      );
+    }
+  };
+
+  const clientesFiltrados = clientes.filter((c) => {
+    if (!filtroCliente) return true;
+    const lower = filtroCliente.toLowerCase();
+    return [c.nombre, c.apellido, c.ci, c.telefono, c.email]
+      .filter(Boolean)
+      .some((v) => v.toLowerCase().includes(lower));
+  });
 
   return (
     <Form onSubmit={(e) => submitFormAdd(e, false)}>
+      <FormGroup>
+        <Label for="clienteSelect">Cliente (opcional)</Label>
+        <Input
+          type="text"
+          placeholder="Filtrar cliente por nombre, CI..."
+          value={filtroCliente}
+          onChange={(e) => setFiltroCliente(e.target.value)}
+          className="mb-2"
+        />
+        <Input
+          type="select"
+          name="clienteSelect"
+          id="clienteSelect"
+          value={selectedClienteId || ""}
+          onChange={onSelectCliente}
+        >
+          <option value="">-- Seleccionar cliente --</option>
+          {clientesFiltrados.map((c) => (
+            <option key={c.idCliente} value={c.idCliente}>
+              {c.idCliente} - {[c.nombre, c.apellido].filter(Boolean).join(" ")}{" "}
+              ({c.ci})
+            </option>
+          ))}
+        </Input>
+        {selectedClienteId && (
+          <Button
+            size="sm"
+            color="secondary"
+            className="mt-2"
+            onClick={() => {
+              setSelectedClienteId(null);
+              setValues({ ...form, nombre: "", ci: "" });
+            }}
+          >
+            Limpiar selección
+          </Button>
+        )}
+      </FormGroup>
       <FormGroup>
         <Label for="nombre">Nombre para el Boleto</Label>
         <Input
