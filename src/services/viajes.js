@@ -1,4 +1,5 @@
 import axios from "axios";
+import { parseFecha, revertirFecha } from "../utils/parserFecha";
 const baseUrl = "/api/viajes";
 let token = null;
 
@@ -6,15 +7,12 @@ const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
 };
 
+// Normaliza cada viaje reemplazando fechaViaje Date/String por objeto { fecha, hora }
 const normalizarLista = (data) => {
   if (Array.isArray(data)) {
     data.forEach((item) => {
       if (item.fechaViaje) {
-        const fechaViaje = new Date(item.fechaViaje);
-        item.fechaViaje = {
-          fecha: fechaViaje.toISOString().split("T")[0],
-          hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
-        };
+        item.fechaViaje = parseFecha(item.fechaViaje);
       }
     });
   }
@@ -38,36 +36,41 @@ const getOne = (id) => {
   return request.then((response) => {
     const data = response.data;
     if (data && data.fechaViaje) {
-      const fechaViaje = new Date(data.fechaViaje);
-      data.fechaViaje = {
-        fecha: fechaViaje.toISOString().split("T")[0],
-        hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
-      };
+      data.fechaViaje = parseFecha(data.fechaViaje);
     }
     return data;
   });
 };
 
 const create = async (newObject) => {
-  const config = {
-    headers: { Authorization: token },
-  };
-
+  const config = { headers: { Authorization: token } };
   const response = await axios.post(baseUrl, newObject, config);
   const data = response.data;
   if (data && data.fechaViaje) {
-    const fechaViaje = new Date(data.fechaViaje);
-    data.fechaViaje = {
-      fecha: fechaViaje.toISOString().split("T")[0],
-      hora: fechaViaje.toISOString().split("T")[1].split(".")[0],
-    };
+    data.fechaViaje = parseFecha(data.fechaViaje);
   }
   return data;
 };
 
 const update = async (id, newObject) => {
-  const response = await axios.put(`${baseUrl}/${id}`, newObject);
-  return response.data;
+  // Si vienen campos separados, consolidar antes de enviar
+  let payload = { ...newObject };
+  if (newObject.fechaViajeFecha && newObject.fechaViajeHora) {
+    payload.fechaViaje = revertirFecha({
+      fecha: newObject.fechaViajeFecha,
+      hora: newObject.fechaViajeHora.length === 5
+        ? `${newObject.fechaViajeHora}:00` // asegurar segundos
+        : newObject.fechaViajeHora,
+    });
+    delete payload.fechaViajeFecha;
+    delete payload.fechaViajeHora;
+  }
+  const response = await axios.put(`${baseUrl}/${id}`, payload);
+  const data = response.data;
+  if (data && data.fechaViaje) {
+    data.fechaViaje = parseFecha(data.fechaViaje);
+  }
+  return data;
 };
 
 const remove = async (id) => {

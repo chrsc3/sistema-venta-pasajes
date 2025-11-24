@@ -56,8 +56,15 @@ function AddEditForm(props) {
 
   const submitFormEdit = (e) => {
     e.preventDefault();
+    const data = {
+      ...form,
+      fechaViaje: revertirFecha({
+        fecha: form.fechaViajeFecha,
+        hora: form.fechaViajeHora.length === 5 ? `${form.fechaViajeHora}:00` : form.fechaViajeHora,
+      }),
+    };
     viajesService
-      .update(form.idViaje, form)
+      .update(form.idViaje, data)
       .then((response) => {
         props.updateState(response);
         props.toggle();

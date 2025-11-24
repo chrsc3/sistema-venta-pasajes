@@ -139,26 +139,22 @@ const Asientos = (props) => {
     });
   };
 
+  // Recarga de asientos cuando cambia el viaje o se realiza una venta/reserva
   useEffect(() => {
     if (props.item) {
-      asientospaService
-        .getbyviajes(props.item.idViaje)
-        .then((asientos) => {
-          setPlantaAlta(asientos);
+      Promise.all([
+        asientospaService.getbyviajes(props.item.idViaje),
+        asientospbService.getbyviajes(props.item.idViaje),
+      ])
+        .then(([alta, baja]) => {
+          setPlantaAlta(alta);
+          setPlantaBaja(baja);
         })
         .catch((error) => {
-          console.error("Error fetching asientospa data:", error);
-        });
-      asientospbService
-        .getbyviajes(props.item.idViaje)
-        .then((asientos) => {
-          setPlantaBaja(asientos);
-        })
-        .catch((error) => {
-          console.error("Error fetching asientospb data:", error);
+          console.error("Error recargando asientos:", error);
         });
     }
-  }, [props.item, props.recargarAsientos]);
+  }, [props.item, props.boletoRealizado]);
   const { onChangeAsientos } = props;
 
   useEffect(() => {
@@ -166,10 +162,9 @@ const Asientos = (props) => {
   }, [asientosSelcionados, onChangeAsientos]);
 
   useEffect(() => {
-    if (props.boletoRealizado === true) {
-      // Limpiar selección después de crear boleto
+    if (props.boletoRealizado) {
+      // Limpiar selección tras venta/reserva
       setAsientosSeleccionados([]);
-      // Los asientos se recargan automáticamente por el useEffect que escucha recargarAsientos
     }
   }, [props.boletoRealizado]);
   return (

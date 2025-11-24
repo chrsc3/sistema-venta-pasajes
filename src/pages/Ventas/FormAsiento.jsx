@@ -6,6 +6,8 @@ import { UserContext } from "../../context/userContext";
 import boletoService from "../../services/boletos";
 import clientesService from "../../services/clientes";
 import pagosService from "../../services/pagos";
+import asientospaService from "../../services/asientospa";
+import asientospbService from "../../services/asientospb";
 import ticket from "../../utils/ticketBoleto";
 
 function AddPasajeroForm(props) {
@@ -88,8 +90,41 @@ function AddPasajeroForm(props) {
             text: "La reserva ha sido registrada exitosamente",
           });
         }
+
+        // Actualizar estado de los asientos en backend a ocupado/reservado
+        const nuevoEstado = esReserva ? "reservado" : "ocupado";
+        await Promise.all(
+          detalleBoleto.map(async (detalle) => {
+            // Determinar si el asiento es planta alta o baja por presencia de id
+            if (detalle.idAsientoPa) {
+              return asientospaService.update(
+                detalle.idAsientoPa,
+                detalle.Viajes_idViaje,
+                {
+                  estado: nuevoEstado,
+                  nombre: detalle.nombre,
+                  ci: detalle.ci,
+                  numAsiento: detalle.numAsiento,
+                }
+              );
+            } else if (detalle.idAsientoPb) {
+              return asientospbService.update(
+                detalle.idAsientoPb,
+                detalle.Viajes_idViaje,
+                {
+                  estado: nuevoEstado,
+                  nombre: detalle.nombre,
+                  ci: detalle.ci,
+                  numAsiento: detalle.numAsiento,
+                }
+              );
+            }
+          })
+        ).catch((err) => console.error("Error actualizando asientos", err));
+
         props.toggle();
-        props.onChangeBoletoRealizado(esReserva);
+        // marcar que se realizó un boleto (venta o reserva) para recargar asientos
+        props.onChangeBoletoRealizado(true);
       })
       .catch((error) => {
         console.error("Error adding boleto:", error);
@@ -117,8 +152,10 @@ function AddPasajeroForm(props) {
         nombre: asiento.nombre,
         ci: asiento.ci,
         Viajes_idViaje: asiento.Viajes_idViaje,
+        // preservar ids para actualización posterior
+        idAsientoPa: asiento.idAsientoPa,
+        idAsientoPb: asiento.idAsientoPb,
       }));
-      console.log(props.selectAsientos);
       setDetalleBoleto(asientosSelcionados);
       asientosSelcionados?.length > 0 &&
         setValues({
